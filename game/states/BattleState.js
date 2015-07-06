@@ -220,8 +220,7 @@ BattleState.prototype = {
 
     create: function() {
 
-        console.log("fucking")
-
+        /*
         const v8flags = require('v8flags');
 
         v8flags(function (err, results) {
@@ -236,7 +235,7 @@ BattleState.prototype = {
                                  //   '--harmony',
                                  // ...
         });
-
+        */
 
         // -------------------------------- PHASER --------------------------------
         this.game.time.advancedTiming = true;
