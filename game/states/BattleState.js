@@ -220,6 +220,8 @@ BattleState.prototype = {
 
     create: function() {
 
+        console.log("fuck")
+
         const v8flags = require('v8flags');
 
         v8flags(function (err, results) {
