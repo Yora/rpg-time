@@ -6,6 +6,8 @@ var BattleMenu = function (game) {
 
     Phaser.Group.call(this, game);
 
+
+    console.log("we")
     // ----- VARIABLES -----
     this.selection_count = 0;
     this.tween_trigger = 1;

@@ -1,4 +1,2 @@
-/closure-compiler
-/misc
-/node-modules
-/src
+src/
+closure-compiler/
