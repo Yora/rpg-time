@@ -1,0 +1,562 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"prev",
+				"prev_selected_ui"
+			],
+			[
+				"battle_skill",
+				"battle_skill_physical_attack"
+			],
+			[
+				"skill",
+				"skill_selected"
+			],
+			[
+				"ski",
+				"skill_selected"
+			],
+			[
+				"tween",
+				"tween_y"
+			],
+			[
+				"move",
+				"move_char_ui"
+			],
+			[
+				"down",
+				"down_pointer_y"
+			],
+			[
+				"g_pl",
+				"g_player_UI_1"
+			],
+			[
+				"r_skill",
+				"r_skill_sprite"
+			],
+			[
+				"timer",
+				"timer_char_ui"
+			],
+			[
+				"y_ad",
+				"y_adjustment"
+			],
+			[
+				"prev_y",
+				"prev_y_adjustment"
+			],
+			[
+				"select",
+				"selected_ui"
+			],
+			[
+				"y",
+				"y_adjustment"
+			],
+			[
+				"slee",
+				"selected_ui"
+			],
+			[
+				"prev_",
+				"prev_tween_y"
+			],
+			[
+				"pre",
+				"prev_tween_y"
+			],
+			[
+				"move_cha",
+				"move_char_ui_callback"
+			],
+			[
+				"sele",
+				"selected_ui"
+			],
+			[
+				"g_player",
+				"g_player_UI_4"
+			],
+			[
+				"g_player_ui",
+				"g_player_UI_1"
+			],
+			[
+				"g_pla",
+				"g_player_1"
+			],
+			[
+				"battle_hex",
+				"battle_hexagon_physical_attack"
+			],
+			[
+				"tween_",
+				"tween_handler_complete"
+			],
+			[
+				"playerd",
+				"player_display"
+			],
+			[
+				"player",
+				"player_skeleton"
+			],
+			[
+				"skeleton",
+				"skeletonId"
+			],
+			[
+				"arma",
+				"armatureName"
+			],
+			[
+				"skele",
+				"skeletonJSON"
+			],
+			[
+				"atlas",
+				"atlasJson"
+			],
+			[
+				"enemy",
+				"enemy_count"
+			],
+			[
+				"g_spir",
+				"g_sprite_container"
+			],
+			[
+				"ani",
+				"animation_desync"
+			],
+			[
+				"occup",
+				"occupied_index"
+			],
+			[
+				"occu",
+				"occupied_index"
+			],
+			[
+				"g_sprite",
+				"g_sprite_container"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 173.0,
+		"last_filter": "jshint",
+		"selected_items":
+		[
+			[
+				"jshint",
+				"JSHint"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Enable Package"
+			]
+		],
+		"width": 416.0
+	},
+	"console":
+	{
+		"height": 120.0,
+		"history":
+		[
+			"sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 libstdc++6:i386",
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/xampp/htdocs/phaser/game"
+	],
+	"file_history":
+	[
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/node_modules/xmlbuilder/package.json",
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/node_modules/xmlbuilder/lib/index.js",
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/lib/bom.js",
+		"/C/xampp/htdocs/phaser/game/sprites/Character.js",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_25.json",
+		"/C/xampp/htdocs/phaser/node_modules/grunt/lib/util/task.js",
+		"/C/xampp/htdocs/phaser/node_modules/grunt/lib/grunt.js",
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/Depp.js",
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/package.json",
+		"/C/xampp/htdocs/phaser/node_modules/xml2js/lib/xml2js.js",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_25.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_28.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_54.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_35.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_28.json",
+		"/C/xampp/htdocs/phaser/.jshintrc",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/JSHint Gutter/.jshintrc",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Color Highlighter/Default.sublime-keymap",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/JSHint Gutter/JSHint.sublime-settings",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency.json",
+		"/C/xampp/htdocs/phaser/assets/fonts/test_0.tga",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_25.txt",
+		"/C/Users/Sean2/AppData/Roaming/npm/node_modules/bmfont2json/bin/bmfont2json.js",
+		"/C/xampp/htdocs/phaser/assets/fonts/fun",
+		"/C/Users/Sean2/AppData/Roaming/npm/node_modules/bmfont2json/test-files/txt/Test.json",
+		"/C/Users/Sean2/AppData/Roaming/npm/node_modules/bmfont2json/test-files/txt/Nexa Light-32.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/test.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/wqsf.json",
+		"/C/xampp/htdocs/phaser/assets/fonts/wqsf.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_25.json.fnt",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Javascript Beautify/Default (Windows).sublime-keymap",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/User/ColorHighlighter.sublime-settings",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/GitGutter/GitGutter.sublime-settings",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/User/GitGutter.sublime-settings",
+		"/C/xampp/htdocs/phaser/proj.sublime-project",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/GitGutter/Default (Windows).sublime-keymap",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/JSHint Gutter/Default (Windows).sublime-keymap",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/JSHint Gutter/README.md",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/xampp/htdocs/phaser/old code.js",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_bold.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_bold.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_bold_0.tga",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency.xml",
+		"/C/xampp/htdocs/phaser/assets/fonts/agency_bold_0.dds",
+		"/C/xampp/htdocs/phaser/assets/fonts/agencyFB.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/agencyBold.fnt",
+		"/C/xampp/htdocs/phaser/assets/fonts/agencyFB_0.tga",
+		"/C/xampp/htdocs/phaser/game/states/.jshintrc",
+		"/C/Users/Sean2/Desktop/WORKLOG.js",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Javascript Beautify/JavascriptBeautify.sublime-settings",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Package Control/Package Control.sublime-settings",
+		"/C/xampp/htdocs/phaser/Gruntfile.js",
+		"/C/xampp/htdocs/phaser/index.html",
+		"/C/xampp/htdocs/phaser/css/styles.css",
+		"/C/Users/Sean2/Desktop/New Text Document.txt",
+		"/C/xampp/htdocs/rpg-time/game/states/Preloader.js",
+		"/C/xampp/htdocs/rpg-time/game/main.js",
+		"/C/xampp/htdocs/rpg-time/game/sprites/Character.js",
+		"/C/xampp/htdocs/rpg-time/game/states/GameState.js",
+		"/C/xampp/htdocs/phaser/package.json",
+		"/C/xampp/htdocs/rpg-time/game/states/BattleState.js",
+		"/C/Users/Sean2/Desktop/rpg-time/Gruntfile.js",
+		"/C/Users/Sean2/Desktop/Gruntfile.js",
+		"/C/xampp/htdocs/rpg-time/Gruntfile.js",
+		"/C/xampp/htdocs/rpg-time/config.php",
+		"/C/xampp/htdocs/rpg-time/config.json",
+		"/C/xampp/htdocs/rpg-time/bower.json",
+		"/C/xampp/htdocs/rpg-time/package.json",
+		"/C/Users/Sean2/Desktop/rpg-time/package.json",
+		"/C/xampp/htdocs/rpg-time/.editorconfig",
+		"/C/Users/Sean2/Desktop/auctions.js",
+		"/C/Users/Sean2/AppData/Local/Temp/Rar$DIa0.933/Gruntfile.js",
+		"/C/Users/Sean2/Desktop/package.json",
+		"/C/xampp/htdocs/rpg-time/misc/backups/game 0.1/states/BattleState.js",
+		"/C/xampp/htdocs/rpg-time/build/phaser.js",
+		"/C/xampp/htdocs/rpg-time/linter.jshintrc",
+		"/C/xampp/htdocs/rpg-time/game/sprites/DB_Player.js",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/User/Default (Windows).sublime-keymap",
+		"/C/xampp/htdocs/rpg-time/game/D_pad.js",
+		"/C/xampp/htdocs/rpg-time/game/states/CharacterMenuState.js",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/xampp/htdocs/rpg-time/assets/SPRITES/player/skeleton_mid.json",
+		"/C/Users/Sean2/Documents/SimCity 4/LEX_Downloads/BSC/Colossus Addon Mod/CAM 1.0 Manual.pdf",
+		"/C/xampp/htdocs/rpg-time/assets/SPRITES/player_base/texture_12_mid.json",
+		"/C/Users/Sean2/Desktop/backup gamestate.js",
+		"/C/xampp/htdocs/rpg-time/backup gamestate heavily ripped apart",
+		"/C/xampp/htdocs/rpg-time/game/states/Boot.js",
+		"/C/xampp/htdocs/rpg-time/dist/js/GLOB.js",
+		"/C/xampp/htdocs/rpg-time/game/game_ui/Map.js",
+		"/C/xampp/htdocs/rpg-time/game/game_ui/InventorySlots.js",
+		"/C/xampp/htdocs/rpg-time/game/game_ui/InventoryEquipmentSlots.js",
+		"/C/xampp/htdocs/rpg-time/game/components/Components.js",
+		"/C/xampp/htdocs/rpg-time/game/sprites/Player.js",
+		"/C/xampp/htdocs/rpg-time/game/sprites/Item.js",
+		"/C/xampp/htdocs/rpg-time/game/sprites/Enemy.js",
+		"/C/xampp/htdocs/rpg-time/dist/js/dragonBones.js",
+		"/C/xampp/htdocs/rpg-time/dist/js/phaser_dragonbones.js",
+		"/C/xampp/htdocs/rpg-time/assets/SPRITES/player_base/skeleton.json",
+		"/C/Users/Sean2/AppData/Roaming/Sublime Text 3/Packages/Default/Default (Windows).sublime-keymap",
+		"/C/xampp/htdocs/rpg-time/assets/SPRITES/player_base/texture_12.json",
+		"/C/Users/Sean2/Desktop/texture_12.json"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"C:\\xampp\\htdocs\\rpg-time\\game"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"grunt",
+			"text_style",
+			"true",
+			"game",
+			"true",
+			"paste",
+			"48",
+			"35",
+			"46",
+			"54",
+			"Agency FB",
+			"54",
+			"Agency FB",
+			"bitmap",
+			"46",
+			"skill_icon_1",
+			"skill",
+			"Text",
+			"text",
+			"move_char_ui",
+			"load",
+			"eal_ally",
+			"_type",
+			"neutral",
+			"magical_attack",
+			"physical_attack",
+			"skill_color",
+			"INIT_SKILL",
+			"hex_skill_slot",
+			";\n",
+			"move_char_ui",
+			"19",
+			"18",
+			"17",
+			"398",
+			"animation_desync",
+			"'",
+			"\"",
+			"move_char_ui",
+			"398",
+			"10",
+			"398",
+			"back",
+			"text",
+			"skill_text",
+			"add",
+			"skill",
+			"13",
+			"46",
+			"123/123",
+			"skill_text",
+			"group",
+			"skill_image",
+			"skill_group",
+			"skill_group_index",
+			"ui_group.getAt(12)",
+			" ui_group.getAt(11)",
+			"ui_group.getAt(10)",
+			"skill_group",
+			"skill_group_1",
+			"skill_type + \"_blue\"",
+			"battle_char_ui_inner",
+			"_attack",
+			"physical",
+			"battle_player_skill_background",
+			"battle_player_skill_background_red",
+			"hex_skill_slot.loadTexture(",
+			"hex_texture",
+			"player_index",
+			"e",
+			"skill_slot",
+			"console",
+			"init_skill",
+			"INIT_SKILL",
+			"selected_skill_slot",
+			"selected_skill",
+			"skill_selected",
+			"white_flash",
+			"black",
+			"ani_start_de",
+			"animation_desync",
+			"update_db",
+			"CANVAS",
+			"g_player_tiles",
+			"INIT_FLOOR_TILES",
+			"\\",
+			"INIT_UI",
+			"Map",
+			"initial_map",
+			"INIT_UI",
+			"animation_desync",
+			"gotoAndPlay",
+			"delay",
+			"INIT_SKILL",
+			"skills",
+			"skill",
+			"update_db",
+			"console.log",
+			"move_char_ui",
+			"time",
+			"watch",
+			"1080",
+			"red",
+			"INIT_SKILL",
+			"selected_ui",
+			"skill_selected",
+			"getat",
+			"selected_ui",
+			"y_adjust",
+			"INIT_SKILL",
+			"4",
+			"3",
+			"3/",
+			"prev_tween_y",
+			"loc_x",
+			"move_char_ui",
+			"prev_tween_y",
+			"tween_y",
+			"prev_selected_ui",
+			"prev_y_adjustment",
+			"this.selected_ui",
+			"move_char_ui",
+			"tween_y",
+			"prev_tween_y",
+			"move_char_ui",
+			"prev_tween_y",
+			"y_adjust",
+			"this.selected_ui"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"this.game."
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 118.0
+	},
+	"pinned_build_system": "",
+	"project": "proj.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 190.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
