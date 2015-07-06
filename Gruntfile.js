@@ -51,6 +51,7 @@ module.exports = function (grunt) {
     },
     open: {
       server: {
+        path: 'http://localhost/rpg-time/index.html'
       }
     },
     copy: {
@@ -94,4 +95,3 @@ module.exports = function (grunt) {
     //grunt.file.write('game/main.js', bootstrapper);
   });
 };
-
