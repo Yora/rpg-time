@@ -21,7 +21,6 @@ Boot.prototype = {
 
     create: function () {
 
-
         //if (navigator.isCocoonJS) {
         //}
         //else {

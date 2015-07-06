@@ -1,2 +1,3 @@
+misc/
 src/
-closure-compiler/
+node_modules/
