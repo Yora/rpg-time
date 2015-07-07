@@ -1,7 +1,153 @@
 'use strict';
-var Character = require('../states/Character');
-var CharacterUI = require('../states/CharacterUI');
-var Enemy = require('../states/Enemy');
+//var Character = require('../states/Character');
+//var CharacterUI = require('../states/CharacterUI');
+//var Enemy = require('../states/Enemy');
+//var v8 = require('v8-natives');
+//var v8 = null;
+
+//Function that contains the pattern to be inspected (using with statement)
+function containsWith() {
+    return 3;
+    for (var i = 0; i < 100; i++)
+        console.log("fun")
+}
+function testing(prev_selected_ui, prev_y_adjustment) {
+
+    
+
+    prev_selected_ui.timer.pause = function () {};
+
+    var game = {
+        height: 10.12
+    }
+
+    prev_y_adjustment = prev_y_adjustment * 0.98;
+
+    prev_selected_ui.y -= prev_y_adjustment;
+
+    if (!(prev_selected_ui.y - prev_y_adjustment > game.height - 560 && prev_selected_ui.y - prev_y_adjustment < game.height - 124)) {
+
+        // If the window goes too high or too low, stop the movement and set the position
+        if (prev_selected_ui.y < 200)
+            prev_selected_ui.y = game.height - 560;
+        else {
+            prev_selected_ui.y = game.height - 124;
+            prev_selected_ui.open = false;
+        }
+
+        prev_selected_ui.timer.pause();
+    }
+
+
+    if (prev_y_adjustment < 1 && prev_y_adjustment > -1)
+        prev_selected_ui.timer.pause();
+}
+
+function printStatus(fn) {
+    switch(%GetOptimizationStatus(fn)) {
+        case 1: console.log("Function is optimized"); break;
+        case 2: console.log("Function is not optimized"); break;
+        case 3: console.log("Function is always optimized"); break;
+        case 4: console.log("Function is never optimized"); break;
+        case 6: console.log("Function is maybe deoptimized"); break;
+    }
+}
+
+var prev_selected_ui = {
+    x: 15.2,
+    timer: function () {
+
+    }
+}
+var prev_selected_ui_2 = {
+    y: 15.2,
+    x: 1,
+    timer: function () {
+
+    }
+}
+var prev_selected_ui_3 = {
+    y: 15.2,
+    timer: function () {
+
+    }
+
+}
+
+function ff(b, o) {
+  if (b) {
+    return o.x
+  } else {
+    return o.x
+  }
+}
+
+
+
+//ff(true, { x: 1 })
+ff(true, prev_selected_ui)
+ff(true, prev_selected_ui)
+
+//ff(true, { x: 1 })
+%OptimizeFunctionOnNextCall(ff);
+
+ff(true, prev_selected_ui)
+printStatus(ff);
+
+
+return;
+
+//Fill type-info
+testing(prev_selected_ui_3);
+// 2 calls are needed to go from uninitialized -> pre-monomorphic -> monomorphic
+testing(prev_selected_ui_3);
+
+%OptimizeFunctionOnNextCall(testing);
+//The next call
+testing(prev_selected_ui_3);
+
+//Check
+printStatus(testing);
+
+return;
+
+
+
+
+//cd "c:\users\sean2\appdata\local\google\chrome sxs\application"
+//FROM CHROME CANARY BINARY - chrome --no-sandbox -js-flags="--prof --nologfile-per-isolate --trace-ic" http://localhost/phaser/index.html
+//FROM DEPOT_TOOLS/V8 - tools\windows-tick-processor.bat v8.log > v8_result.js
+//FROM CHROME CANARY BINARY - chrome --no-sandbox -js-flags="--prof --nologfile-per-isolate --trace-gc --trace-ic --trace-opt --trace-bailout --trace-deop" http://localhost/phaser/index.html
+
+
+
+
+//chrome --no-sandbox -js-flags="--prof --trace-hydrogen" http://localhost/phaser/index.html
+/*
+function printStatus(fn) {
+    switch(%GetOptimizationStatus(fn)) {
+        case 1: console.log("Function is optimized"); break;
+        case 2: console.log("Function is not optimized"); break;
+        case 3: console.log("Function is always optimized"); break;
+        case 4: console.log("Function is never optimized"); break;
+        case 6: console.log("Function is maybe deoptimized"); break;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //console.log("%cUser %s has %d points", "color:orange; background:blue; font-size: 16pt", userName, userPoints);
 
@@ -220,7 +366,7 @@ BattleState.prototype = {
 
     create: function() {
 
-        
+        /*
         const v8flags = require('v8flags');
 
         v8flags(function (err, results) {
@@ -235,7 +381,7 @@ BattleState.prototype = {
                                  //   '--harmony',
                                  // ...
         });
-        
+        */
 
         // -------------------------------- PHASER --------------------------------
         this.game.time.advancedTiming = true;
@@ -290,10 +436,10 @@ BattleState.prototype = {
         this.g_enemy_tiles.classType = Phaser.Image;
         this.g_sprite_container = this.game.add.group();
 
-        this.g_player_UI_1 = this.game.add.group();
-        this.g_player_UI_2 = this.game.add.group();
-        this.g_player_UI_3 = this.game.add.group();
-        this.g_player_UI_4 = this.game.add.group();
+        //this.g_player_UI_1 = this.game.add.group();
+        //this.g_player_UI_2 = this.game.add.group();
+        //this.g_player_UI_3 = this.game.add.group();
+        //this.g_player_UI_4 = this.game.add.group();
 
         //this.g_main.add(this.g_player_tiles);
         //this.g_main.add(this.g_enemy_tiles);
@@ -332,11 +478,11 @@ BattleState.prototype = {
         this.game.input.onDown.add(this.touchInputDown, this);
         //this.game_functions();
         //this.INIT_CONTROLS();
-        this.INIT_UI(); //c.Group in heap jumps way the fuck up here. lag fuckin city.
+        //this.INIT_UI(); //c.Group in heap jumps way the fuck up here. lag fuckin city.
         // Create black screen
-        //this.black = this.game.add.sprite(0, 0, 'black');
-        //this.black.width = this.game.width;
-        //this.black.height = this.game.height;
+        this.black = this.game.add.sprite(0, 0, 'black');
+        this.black.width = this.game.width;
+        this.black.height = this.game.height;
 
 
         // ------------------------------- TIMERS --------------------------------

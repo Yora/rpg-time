@@ -1,26 +1,5 @@
 'use strict';
 
-
-//cd "c:\users\sean2\appdata\local\google\chrome sxs\application"
-//FROM CHROME CANARY BINARY - chrome --no-sandbox -js-flags="--prof --nologfile-per-isolate --trace-ic" http://localhost/phaser/index.html
-//FROM DEPOT_TOOLS/V8 - tools\windows-tick-processor.bat v8.log > v8_result.js
-//FROM CHROME CANARY BINARY - chrome --no-sandbox -js-flags="--prof --nologfile-per-isolate --trace-gc --trace-ic --trace-opt --trace-bailout --trace-deop" http://localhost/phaser/index.html
-
-
-
-
-//chrome --no-sandbox -js-flags="--prof --trace-hydrogen" http://localhost/phaser/index.html
-/*
-function printStatus(fn) {
-    switch(%GetOptimizationStatus(fn)) {
-        case 1: console.log("Function is optimized"); break;
-        case 2: console.log("Function is not optimized"); break;
-        case 3: console.log("Function is always optimized"); break;
-        case 4: console.log("Function is never optimized"); break;
-        case 6: console.log("Function is maybe deoptimized"); break;
-    }
-}
-*/
 //var fun4 = null; wont collect this variable, but is this variable just a small reference?
 function init_DB(player_val, obj) {
 
@@ -197,8 +176,10 @@ function init_DB(player_val, obj) {
     obj.add(player_display);
 }
 
+var window = {};
+window.devicePixelRatio = 1;
 
-window.onload = function () {
+//window.onload = function () {
 
     var SAFE_ZONE_WIDTH = 960;
     var SAFE_ZONE_HEIGHT = 640;
@@ -636,5 +617,5 @@ var game = new Phaser.Game(SAFE_ZONE_WIDTH + extraWidth, SAFE_ZONE_HEIGHT + extr
         }, false );
     }
 */
-};
+//};
 
