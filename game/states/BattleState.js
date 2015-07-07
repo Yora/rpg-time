@@ -3,6 +3,24 @@ var Character = require('../states/Character');
 var CharacterUI = require('../states/CharacterUI');
 var Enemy = require('../states/Enemy');
 
+/*
+console.log("fuck")
+const v8flags = require('v8flags');
+console.log(v8flags)
+        v8flags(function (err, results) {
+          console.log(results);  // [ '--use_strict',
+                                 //   '--es5_readonly',
+                                 //   '--es52_globals',
+                                 //   '--harmony_typeof',
+                                 //   '--harmony_scoping',
+                                 //   '--harmony_modules',
+                                 //   '--harmony_proxies',
+                                 //   '--harmony_collections',
+                                 //   '--harmony',
+                                 // ...
+       });
+*/
+
 //console.log("%cUser %s has %d points", "color:orange; background:blue; font-size: 16pt", userName, userPoints);
 
 /*
@@ -220,21 +238,7 @@ BattleState.prototype = {
 
     create: function() {
 
-        
-        const v8flags = require('v8flags');
-
-        v8flags(function (err, results) {
-          console.log(results);  // [ '--use_strict',
-                                 //   '--es5_readonly',
-                                 //   '--es52_globals',
-                                 //   '--harmony_typeof',
-                                 //   '--harmony_scoping',
-                                 //   '--harmony_modules',
-                                 //   '--harmony_proxies',
-                                 //   '--harmony_collections',
-                                 //   '--harmony',
-                                 // ...
-        });
+    
         
 
         // -------------------------------- PHASER --------------------------------
