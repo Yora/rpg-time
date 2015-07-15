@@ -45,12 +45,6 @@ Phaser.Camera = function (game, id, x, y, width, height) {
     this.view = new Phaser.Rectangle(x, y, width, height);
 
     /**
-    * @property {Phaser.Rectangle} screenView - Used by Sprites to work out Camera culling.
-    * @deprecated No longer used for camera culling. Uses Camera.view instead.
-    */
-    this.screenView = new Phaser.Rectangle(x, y, width, height);
-
-    /**
     * The Camera is bound to this Rectangle and cannot move outside of it. By default it is enabled and set to the size of the World.
     * The Rectangle can be located anywhere in the world and updated as often as you like. If you don't wish the Camera to be bound
     * at all then set this to null. The values can be anything and are in World coordinates, with 0,0 being the top-left of the world.
@@ -522,6 +516,247 @@ Object.defineProperty(Phaser.Camera.prototype, "height", {
 */
 
 /**
+*
+* TODO: Gradient generator
+* TODO: Look at sfxr for audio gen
+* TODO: Dither support
+* TODO: Sprite Sheet generator
+*
+* @class Phaser.Create
+* @constructor
+* @param {Phaser.Game} game - Game reference to the currently running game.
+ */
+Phaser.Create = function (game) {
+
+    /**
+    * @property {Phaser.Game} game - A reference to the currently running Game.
+    */
+    this.game = game;
+
+    this.bmd = game.make.bitmapData();
+
+    this.canvas = this.bmd.canvas;
+    this.ctx = this.bmd.context;
+
+    // http://androidarts.com/palette/16pal.htm
+
+    // { 0: '#000', 1: '#', 2: '#', 3: '#', 4: '#', 5: '#', 6: '#', 7: '#', 8: '#', 9: '#', A: '#', B: '#', C: '#', D: '#', E: '#', F: '#' }
+
+    this.palettes = [
+        { 0: '#000', 1: '#9D9D9D', 2: '#FFF', 3: '#BE2633', 4: '#E06F8B', 5: '#493C2B', 6: '#A46422', 7: '#EB8931', 8: '#F7E26B', 9: '#2F484E', A: '#44891A', B: '#A3CE27', C: '#1B2632', D: '#005784', E: '#31A2F2', F: '#B2DCEF' },
+        { 0: '#000', 1: '#191028', 2: '#46af45', 3: '#a1d685', 4: '#453e78', 5: '#7664fe', 6: '#833129', 7: '#9ec2e8', 8: '#dc534b', 9: '#e18d79', A: '#d6b97b', B: '#e9d8a1', C: '#216c4b', D: '#d365c8', E: '#afaab9', F: '#f5f4eb' },
+        { 0: '#000', 1: '#2234d1', 2: '#0c7e45', 3: '#44aacc', 4: '#8a3622', 5: '#5c2e78', 6: '#aa5c3d', 7: '#b5b5b5', 8: '#5e606e', 9: '#4c81fb', A: '#6cd947', B: '#7be2f9', C: '#eb8a60', D: '#e23d69', E: '#ffd93f', F: '#fff' },
+        { 0: '#000', 1: '#fff', 2: '#8b4131', 3: '#7bbdc5', 4: '#8b41ac', 5: '#6aac41', 6: '#3931a4', 7: '#d5de73', 8: '#945a20', 9: '#5a4100', A: '#bd736a', B: '#525252', C: '#838383', D: '#acee8b', E: '#7b73de', F: '#acacac' },
+        { 0: '#000', 1: '#191028', 2: '#46af45', 3: '#a1d685', 4: '#453e78', 5: '#7664fe', 6: '#833129', 7: '#9ec2e8', 8: '#dc534b', 9: '#e18d79', A: '#d6b97b', B: '#e9d8a1', C: '#216c4b', D: '#d365c8', E: '#afaab9', F: '#fff' }
+    ];
+
+};
+
+Phaser.Create.PALETTE_ARNE = 0;
+Phaser.Create.PALETTE_JMP = 1;
+Phaser.Create.PALETTE_CGA = 2;
+Phaser.Create.PALETTE_C64 = 3;
+Phaser.Create.PALETTE_JAPANESE_MACHINE = 4;
+
+Phaser.Create.prototype = {
+
+    texture: function (key, data, pixelWidth, pixelHeight, palette) {
+
+        if (typeof pixelWidth === 'undefined') { pixelWidth = 8; }
+        if (typeof pixelHeight === 'undefined') { pixelHeight = pixelWidth; }
+        if (typeof palette === 'undefined') { palette = 0; }
+
+        var w = data[0].length * pixelWidth;
+        var h = data.length * pixelHeight;
+
+        this.bmd.resize(w, h);
+        this.bmd.clear();
+
+        //  Draw it
+        for (var y = 0; y < data.length; y++)
+        {
+            var row = data[y];
+
+            for (var x = 0; x < row.length; x++)
+            {
+                var d = row[x];
+
+                if (d !== '.' && d !== ' ')
+                {
+                    this.ctx.fillStyle = this.palettes[palette][d];
+                    this.ctx.fillRect(x * pixelWidth, y * pixelHeight, pixelWidth, pixelHeight);
+                }
+            }
+        }
+
+        return this.bmd.generateTexture(key);
+
+    },
+
+    grid: function (key, width, height, cellWidth, cellHeight, color) {
+
+        this.bmd.resize(width, height);
+
+        this.ctx.fillStyle = color;
+
+        for (var y = 0; y < height; y += cellHeight)
+        {
+            this.ctx.fillRect(0, y, width, 1);
+        }
+
+        for (var x = 0; x < width; x += cellWidth)
+        {
+            this.ctx.fillRect(x, 0, 1, height);
+        }
+
+        return this.bmd.generateTexture(key);
+
+    }
+
+};
+
+Phaser.Create.prototype.constructor = Phaser.Create;
+
+/* 
+ * RIFFWAVE.js v0.03 - Audio encoder for HTML5 <audio> elements.
+ * Copyleft 2011 by Pedro Ladaria <pedro.ladaria at Gmail dot com>
+ *
+ * Public Domain
+ *
+ * Changelog:
+ *
+ * 0.01 - First release
+ * 0.02 - New faster base64 encoding
+ * 0.03 - Support for 16bit samples
+ *
+ * Notes:
+ *
+ * 8 bit data is unsigned: 0..255
+ * 16 bit data is signed: âˆ’32,768..32,767
+ *
+ */
+
+/*
+var FastBase64 = {
+
+    chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    encLookup: [],
+
+    Init: function() {
+        for (var i=0; i<4096; i++) {
+            this.encLookup[i] = this.chars[i >> 6] + this.chars[i & 0x3F];
+        }
+    },
+
+    Encode: function(src) {
+        var len = src.length;
+        var dst = '';
+        var i = 0;
+        while (len > 2) {
+            n = (src[i] << 16) | (src[i+1]<<8) | src[i+2];
+            dst+= this.encLookup[n >> 12] + this.encLookup[n & 0xFFF];
+            len-= 3;
+            i+= 3;
+        }
+        if (len > 0) {
+            var n1= (src[i] & 0xFC) >> 2;
+            var n2= (src[i] & 0x03) << 4;
+            if (len > 1) n2 |= (src[++i] & 0xF0) >> 4;
+            dst+= this.chars[n1];
+            dst+= this.chars[n2];
+            if (len == 2) {
+                var n3= (src[i++] & 0x0F) << 2;
+                n3 |= (src[i] & 0xC0) >> 6;
+                dst+= this.chars[n3];
+            }
+            if (len == 1) dst+= '=';
+            dst+= '=';
+        }
+        return dst;
+    } // end Encode
+
+}
+
+FastBase64.Init();
+
+var RIFFWAVE = function(data) {
+
+    this.data = [];        // Array containing audio samples
+    this.wav = [];         // Array containing the generated wave file
+    this.dataURI = '';     // http://en.wikipedia.org/wiki/Data_URI_scheme
+
+    this.header = {                         // OFFS SIZE NOTES
+        chunkId      : [0x52,0x49,0x46,0x46], // 0    4    "RIFF" = 0x52494646
+        chunkSize    : 0,                     // 4    4    36+SubChunk2Size = 4+(8+SubChunk1Size)+(8+SubChunk2Size)
+        format       : [0x57,0x41,0x56,0x45], // 8    4    "WAVE" = 0x57415645
+        subChunk1Id  : [0x66,0x6d,0x74,0x20], // 12   4    "fmt " = 0x666d7420
+        subChunk1Size: 16,                    // 16   4    16 for PCM
+        audioFormat  : 1,                     // 20   2    PCM = 1
+        numChannels  : 1,                     // 22   2    Mono = 1, Stereo = 2...
+        sampleRate   : 8000,                  // 24   4    8000, 44100...
+        byteRate     : 0,                     // 28   4    SampleRate*NumChannels*BitsPerSample/8
+        blockAlign   : 0,                     // 32   2    NumChannels*BitsPerSample/8
+        bitsPerSample: 8,                     // 34   2    8 bits = 8, 16 bits = 16
+        subChunk2Id  : [0x64,0x61,0x74,0x61], // 36   4    "data" = 0x64617461
+        subChunk2Size: 0                      // 40   4    data size = NumSamples*NumChannels*BitsPerSample/8
+    };
+
+    function u32ToArray(i) {
+        return [i&0xFF, (i>>8)&0xFF, (i>>16)&0xFF, (i>>24)&0xFF];
+    }
+
+    function u16ToArray(i) {
+        return [i&0xFF, (i>>8)&0xFF];
+    }
+
+    function split16bitArray(data) {
+        var r = [];
+        var j = 0;
+        var len = data.length;
+        for (var i=0; i<len; i++) {
+            r[j++] = data[i] & 0xFF;
+            r[j++] = (data[i]>>8) & 0xFF;
+        }
+        return r;
+    }
+
+    this.Make = function(data) {
+        if (data instanceof Array) this.data = data;
+        this.header.blockAlign = (this.header.numChannels * this.header.bitsPerSample) >> 3;
+        this.header.byteRate = this.header.blockAlign * this.sampleRate;
+        this.header.subChunk2Size = this.data.length * (this.header.bitsPerSample >> 3);
+        this.header.chunkSize = 36 + this.header.subChunk2Size;
+
+        this.wav = this.header.chunkId.concat(
+            u32ToArray(this.header.chunkSize),
+            this.header.format,
+            this.header.subChunk1Id,
+            u32ToArray(this.header.subChunk1Size),
+            u16ToArray(this.header.audioFormat),
+            u16ToArray(this.header.numChannels),
+            u32ToArray(this.header.sampleRate),
+            u32ToArray(this.header.byteRate),
+            u16ToArray(this.header.blockAlign),
+            u16ToArray(this.header.bitsPerSample),    
+            this.header.subChunk2Id,
+            u32ToArray(this.header.subChunk2Size),
+            (this.header.bitsPerSample == 16) ? split16bitArray(this.data) : this.data
+        );
+        this.dataURI = 'data:audio/wav;base64,'+FastBase64.Encode(this.wav);
+    };
+
+    if (data instanceof Array) this.Make(data);
+
+}; // end RIFFWAVE
+*/
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2015 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
 * This is a base State class which can be extended if you are creating your own game.
 * It provides quick access to common functions such as the camera, cache, input, match, sound and more.
 *
@@ -681,6 +916,14 @@ Phaser.State.prototype = {
     },
 
     /**
+    * The preRender method is called after all Game Objects have been updated, but before any rendering takes place.
+    *
+    * @method Phaser.State#preRender
+    */
+    preRender: function () {
+    },
+
+    /**
     * Nearly all display objects in Phaser render automatically, you don't need to tell them to render.
     * However the render method is called AFTER the game renderer and plugins have rendered, so you're able to do any
     * final post-processing style effects here. Note that this happens before plugins postRender takes place.
@@ -704,6 +947,14 @@ Phaser.State.prototype = {
     * @method Phaser.State#paused
     */
     paused: function () {
+    },
+
+    /**
+    * This method will be called when the core game loop resumes from a paused state.
+    *
+    * @method Phaser.State#resumed
+    */
+    resumed: function () {
     },
 
     /**
@@ -794,6 +1045,20 @@ Phaser.StateManager = function (game, pendingState) {
     * @default
     */
     this.current = '';
+
+    /**
+    * onStateChange is a Phaser.Signal that is dispatched whenever the game changes state.
+    * 
+    * It is dispatched only when the new state is started, which isn't usually at the same time as StateManager.start
+    * is called because state swapping is done in sync with the game loop. It is dispatched *before* any of the new states
+    * methods (such as preload and create) are called, and *after* the previous states shutdown method has been run.
+    *
+    * The callback you specify is sent two parameters: the string based key of the new state, 
+    * and the second parameter is the string based key of the old / previous state.
+    * 
+    * @property {Phaser.Signal} onStateChange
+    */
+    this.onStateChange = new Phaser.Signal();
 
     /**
     * @property {function} onInitCallback - This is called when the state is set as the active state.
@@ -1044,10 +1309,14 @@ Phaser.StateManager.prototype = {
 
         if (this._pendingState && this.game.isBooted)
         {
+            var previousStateKey = this.current;
+
             //  Already got a state running?
             this.clearCurrentState();
 
             this.setCurrentState(this._pendingState);
+
+            this.onStateChange.dispatch(this.current, previousStateKey);
 
             if (this.current !== this._pendingState)
             {
@@ -1342,9 +1611,12 @@ Phaser.StateManager.prototype = {
     */
     update: function () {
 
-        if (this._created && this.onUpdateCallback)
+        if (this._created)
         {
-            this.onUpdateCallback.call(this.callbackContext, this.game);
+            if (this.onUpdateCallback)
+            {
+                this.onUpdateCallback.call(this.callbackContext, this.game);
+            }
         }
         else
         {
@@ -1362,9 +1634,12 @@ Phaser.StateManager.prototype = {
     */
     pauseUpdate: function () {
 
-        if (this._created && this.onPauseUpdateCallback)
+        if (this._created)
         {
-            this.onPauseUpdateCallback.call(this.callbackContext, this.game);
+            if (this.onPauseUpdateCallback)
+            {
+                this.onPauseUpdateCallback.call(this.callbackContext, this.game);
+            }
         }
         else
         {
@@ -1383,7 +1658,7 @@ Phaser.StateManager.prototype = {
     */
     preRender: function (elapsedTime) {
 
-        if (this.onPreRenderCallback)
+        if (this._created && this.onPreRenderCallback)
         {
             this.onPreRenderCallback.call(this.callbackContext, this.game, elapsedTime);
         }
@@ -1409,18 +1684,21 @@ Phaser.StateManager.prototype = {
     */
     render: function () {
 
-        if (this._created && this.onRenderCallback)
+        if (this._created)
         {
-            if (this.game.renderType === Phaser.CANVAS)
+            if (this.onRenderCallback)
             {
-                this.game.context.save();
-                this.game.context.setTransform(1, 0, 0, 1, 0, 0);
-                this.onRenderCallback.call(this.callbackContext, this.game);
-                this.game.context.restore();
-            }
-            else
-            {
-                this.onRenderCallback.call(this.callbackContext, this.game);
+                if (this.game.renderType === Phaser.CANVAS)
+                {
+                    this.game.context.save();
+                    this.game.context.setTransform(1, 0, 0, 1, 0, 0);
+                    this.onRenderCallback.call(this.callbackContext, this.game);
+                    this.game.context.restore();
+                }
+                else
+                {
+                    this.onRenderCallback.call(this.callbackContext, this.game);
+                }
             }
         }
         else
@@ -1469,6 +1747,21 @@ Phaser.StateManager.prototype = {
 Phaser.StateManager.prototype.constructor = Phaser.StateManager;
 
 /**
+* @name Phaser.StateManager#created
+* @property {boolean} created - True if the current state has had its `create` method run (if it has one, if not this is true by default).
+* @readOnly
+*/
+Object.defineProperty(Phaser.StateManager.prototype, "created", {
+
+    get: function () {
+
+        return this._created;
+
+    }
+
+});
+
+/**
 * @author       Miller Medeiros http://millermedeiros.github.com/js-signals/
 * @author       Richard Davey <rich@photonstorm.com>
 * @copyright    2015 Photon Storm Ltd.
@@ -1476,7 +1769,7 @@ Phaser.StateManager.prototype.constructor = Phaser.StateManager;
 */
 
 /**
-* A Signal is an event dispatch mechansim than supports broadcasting to multiple listeners.
+* A Signal is an event dispatch mechansim that supports broadcasting to multiple listeners.
 *
 * Event listeners are uniquely identified by the listener/callback function and the context.
 * 
@@ -1517,7 +1810,7 @@ Phaser.Signal.prototype = {
     _shouldPropagate: true,
 
     /**
-    * Is the Signal active? Only active signal will broadcast dispatched events.
+    * Is the Signal active? Only active signals will broadcast dispatched events.
     *
     * Setting this property during a dispatch will only affect the next dispatch. To stop the propagation of a signal from a listener use {@link #halt}.
     *
@@ -1556,7 +1849,7 @@ Phaser.Signal.prototype = {
     * @param {number} [priority] - The priority level of the event listener. Listeners with higher priority will be executed before listeners with lower priority. Listeners with same priority level will be executed at the same order as they were added. (default = 0).
     * @return {Phaser.SignalBinding} An Object representing the binding between the Signal and listener.
     */
-    _registerListener: function (listener, isOnce, listenerContext, priority) {
+    _registerListener: function (listener, isOnce, listenerContext, priority, args) {
 
         var prevIndex = this._indexOfListener(listener, listenerContext);
         var binding;
@@ -1572,7 +1865,7 @@ Phaser.Signal.prototype = {
         }
         else
         {
-            binding = new Phaser.SignalBinding(this, listener, isOnce, listenerContext, priority);
+            binding = new Phaser.SignalBinding(this, listener, isOnce, listenerContext, priority, args);
             this._addBinding(binding);
         }
 
@@ -1657,19 +1950,44 @@ Phaser.Signal.prototype = {
     },
 
     /**
-    * Add an event listener.
+    * Add an event listener for this signal.
+    *
+    * An event listener is a callback with a related context and priority.
+    *
+    * You can optionally provide extra arguments which will be passed to the callback after any internal parameters.
+    *
+    * For example: `Phaser.Key.onDown` when dispatched will send the Phaser.Key object that caused the signal as the first parameter.
+    * Any arguments you've specified after `priority` will be sent as well:
+    *
+    * `fireButton.onDown.add(shoot, this, 0, 'lazer', 100);`
+    *
+    * When onDown dispatches it will call the `shoot` callback passing it: `Phaser.Key, 'lazer', 100`.
+    *
+    * Where the first parameter is the one that Key.onDown dispatches internally and 'lazer', 
+    * and the value 100 were the custom arguments given in the call to 'add'.
     *
     * @method Phaser.Signal#add
     * @param {function} listener - The function to call when this Signal is dispatched.
     * @param {object} [listenerContext] - The context under which the listener will be executed (i.e. the object that should represent the `this` variable).
     * @param {number} [priority] - The priority level of the event listener. Listeners with higher priority will be executed before listeners with lower priority. Listeners with same priority level will be executed at the same order as they were added (default = 0)
+    * @param {...any} [args=(none)] - Additional arguments to pass to the callback (listener) function. They will be appended after any arguments usually dispatched.
     * @return {Phaser.SignalBinding} An Object representing the binding between the Signal and listener.
     */
     add: function (listener, listenerContext, priority) {
 
         this.validateListener(listener, 'add');
 
-        return this._registerListener(listener, false, listenerContext, priority);
+        var args = [];
+
+        if (arguments.length > 3)
+        {
+            for (var i = 3; i < arguments.length; i++)
+            {
+                args.push(arguments[i]);
+            }
+        }
+
+        return this._registerListener(listener, false, listenerContext, priority, args);
 
     },
 
@@ -1683,13 +2001,24 @@ Phaser.Signal.prototype = {
     * @param {function} listener - The function to call when this Signal is dispatched.
     * @param {object} [listenerContext] - The context under which the listener will be executed (i.e. the object that should represent the `this` variable).
     * @param {number} [priority] - The priority level of the event listener. Listeners with higher priority will be executed before listeners with lower priority. Listeners with same priority level will be executed at the same order as they were added (default = 0)
+    * @param {...any} [args=(none)] - Additional arguments to pass to the callback (listener) function. They will be appended after any arguments usually dispatched.
     * @return {Phaser.SignalBinding} An Object representing the binding between the Signal and listener.
     */
     addOnce: function (listener, listenerContext, priority) {
 
         this.validateListener(listener, 'addOnce');
 
-        return this._registerListener(listener, true, listenerContext, priority);
+        var args = [];
+
+        if (arguments.length > 3)
+        {
+            for (var i = 3; i < arguments.length; i++)
+            {
+                args.push(arguments[i]);
+            }
+        }
+
+        return this._registerListener(listener, true, listenerContext, priority, args);
 
     },
 
@@ -1772,7 +2101,7 @@ Phaser.Signal.prototype = {
     /**
     * Stop propagation of the event, blocking the dispatch to next listener on the queue.
     *
-    * This should be called only during event dispatch as calling it before/after dispatch won't affect other broadcast.
+    * This should be called only during event dispatch as calling it before/after dispatch won't affect another broadcast.
     * See {@link #active} to enable/disable the signal entirely.
     *
     * @method Phaser.Signal#halt
@@ -1914,8 +2243,9 @@ Phaser.Signal.prototype.constructor = Phaser.Signal;
 * @param {boolean} isOnce - If binding should be executed just once.
 * @param {object} [listenerContext=null] - Context on which listener will be executed (object that should represent the `this` variable inside listener function).
 * @param {number} [priority] - The priority level of the event listener. (default = 0).
+* @param {...any} [args=(none)] - Additional arguments to pass to the callback (listener) function. They will be appended after any arguments usually dispatched.
 */
-Phaser.SignalBinding = function (signal, listener, isOnce, listenerContext, priority) {
+Phaser.SignalBinding = function (signal, listener, isOnce, listenerContext, priority, args) {
 
     /**
     * @property {Phaser.Game} _listener - Handler function bound to the signal.
@@ -1944,6 +2274,11 @@ Phaser.SignalBinding = function (signal, listener, isOnce, listenerContext, prio
         this._priority = priority;
     }
 
+    if (args && args.length)
+    {
+        this._args = args;
+    }
+
 };
 
 Phaser.SignalBinding.prototype = {
@@ -1964,6 +2299,12 @@ Phaser.SignalBinding.prototype = {
     * @private
     */
     _priority: 0,
+
+    /**
+    * @property {array} _args - Listener arguments.
+    * @private
+    */
+    _args: null,
 
     /**
     * @property {number} callCount - The number of times the handler function has been called.
@@ -1998,7 +2339,14 @@ Phaser.SignalBinding.prototype = {
         if (this.active && !!this._listener)
         {
             params = this.params ? this.params.concat(paramsArr) : paramsArr;
+
+            if (this._args)
+            {
+                params = params.concat(this._args);
+            }
+
             handlerReturn = this._listener.apply(this.context, params);
+
             this.callCount++;
 
             if (this._isOnce)
@@ -2439,7 +2787,7 @@ Phaser.PluginManager.prototype = {
     *
     * @method Phaser.PluginManager#add
     * @param {object|Phaser.Plugin} plugin - The Plugin to add into the PluginManager. This can be a function or an existing object.
-    * @param {...*} parameter - Additional parameters that will be passed to the Plugin.init method.
+    * @param {...*} parameter - Additional arguments that will be passed to the Plugin.init method.
     * @return {Phaser.Plugin} The Plugin that was added to the manager.
     */
     add: function (plugin) {
@@ -3178,6 +3526,18 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     this.ignoreDestroy = false;
 
     /**
+    * A Group is that has `pendingDestroy` set to `true` is flagged to have its destroy method 
+    * called on the next logic update.
+    * You can set it directly to flag the Group to be destroyed on its next update.
+    * 
+    * This is extremely useful if you wish to destroy a Group from within one of its own callbacks 
+    * or a callback of one of its children.
+    * 
+    * @property {boolean} pendingDestroy
+    */
+    this.pendingDestroy = false;
+
+    /**
     * The type of objects that will be created when using {@link #create} or {@link #createMultiple}.
     *
     * Any object may be used but it should extend either Sprite or Image and accept the same constructor arguments:
@@ -3187,13 +3547,6 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     * @default {@link Phaser.Sprite}
     */
     this.classType = Phaser.Sprite;
-
-    /**
-    * The scale of the group container.
-    *
-    * @property {Phaser.Point} scale
-    */
-    this.scale = new Phaser.Point(1, 1);
 
     /**
     * The current display object that the group cursor is pointing to, if any. (Can be set manually.)
@@ -3229,6 +3582,24 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     this.physicsBodyType = physicsBodyType;
 
     /**
+    * If this Group contains Arcade Physics Sprites you can set a custom sort direction via this property.
+    * 
+    * It should be set to one of the Phaser.Physics.Arcade sort direction constants: 
+    * 
+    * Phaser.Physics.Arcade.SORT_NONE
+    * Phaser.Physics.Arcade.LEFT_RIGHT
+    * Phaser.Physics.Arcade.RIGHT_LEFT
+    * Phaser.Physics.Arcade.TOP_BOTTOM
+    * Phaser.Physics.Arcade.BOTTOM_TOP
+    *
+    * If set to `null` the Group will use whatever Phaser.Physics.Arcade.sortDirection is set to. This is the default behavior.
+    * 
+    * @property {integer} physicsSortDirection
+    * @default
+    */
+    this.physicsSortDirection = null;
+
+    /**
     * This signal is dispatched when the group is destroyed.
     * @property {Phaser.Signal} onDestroy
     */
@@ -3258,11 +3629,17 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     this.cameraOffset = new Phaser.Point();
 
     /**
-    * An internal array used by physics for fast non z-index destructive sorting.
-    * @property {array} _hash
-    * @private
+    * The hash array is an array belonging to this Group into which you can add any of its children via Group.addToHash and Group.removeFromHash.
+    * 
+    * Only children of this Group can be added to and removed from the hash.
+    * 
+    * This hash is used automatically by Phaser Arcade Physics in order to perform non z-index based destructive sorting.
+    * However if you don't use Arcade Physics, or this isn't a physics enabled Group, then you can use the hash to perform your own
+    * sorting and filtering of Group children without touching their z-index (and therefore display draw order)
+    * 
+    * @property {array} hash
     */
-    this._hash = [];
+    this.hash = [];
 
     /**
     * The property on which children are sorted.
@@ -3316,6 +3693,8 @@ Phaser.Group.SORT_DESCENDING = 1;
 *
 * The child is automatically added to the top of the group and is displayed on top of every previous child.
 *
+* If Group.enableBody is set then a physics body will be created on the object, so long as one does not already exist.
+*
 * Use {@link #addAt} to control where a child is added. Use {@link #create} to create and add a new child.
 *
 * @method Phaser.Group#add
@@ -3329,16 +3708,18 @@ Phaser.Group.prototype.add = function (child, silent) {
 
     if (child.parent !== this)
     {
-        if (this.enableBody)
+        this.addChild(child);
+
+        child.z = this.children.length;
+
+        if (this.enableBody && child.body === null)
         {
             this.game.physics.enable(child, this.physicsBodyType);
         }
-
-        this.addChild(child);
-
-        this._hash.push(child);
-
-        child.z = this.children.length;
+        else if (child.body)
+        {
+            this.addToHash(child);
+        }
 
         if (!silent && child.events)
         {
@@ -3356,20 +3737,75 @@ Phaser.Group.prototype.add = function (child, silent) {
 };
 
 /**
-* Adds an array of existing display objects to this group.
+* Adds a child of this Group into the hash array.
+* This call will return false if the child is not a child of this Group, or is already in the hash.
 *
-* The children are automatically added to the top of the group, so render on-top of everything else within the group.
+* @method Phaser.Group#addToHash
+* @param {DisplayObject} child - The display object to add to this Groups hash. Must be a member of this Group already and not present in the hash.
+* @return {boolean} True if the child was successfully added to the hash, otherwise false.
+*/
+Phaser.Group.prototype.addToHash = function (child) {
+
+    if (child.parent === this)
+    {
+        var index = this.hash.indexOf(child);
+
+        if (index === -1)
+        {
+            this.hash.push(child);
+            return true;
+        }
+    }
+
+    return false;
+
+};
+
+/**
+* Removes a child of this Group from the hash array.
+* This call will return false if the child is not in the hash.
 *
-* TODO: Add ability to pass the children as parameters rather than having to be an array.
+* @method Phaser.Group#removeFromHash
+* @param {DisplayObject} child - The display object to remove from this Groups hash. Must be a member of this Group and in the hash.
+* @return {boolean} True if the child was successfully removed from the hash, otherwise false.
+*/
+Phaser.Group.prototype.removeFromHash = function (child) {
+
+    if (child)
+    {
+        var index = this.hash.indexOf(child);
+
+        if (index !== -1)
+        {
+            this.hash.splice(index, 1);
+            return true;
+        }
+    }
+
+    return false;
+
+};
+
+/**
+* Adds an array of existing Display Objects to this Group.
+*
+* The Display Objects are automatically added to the top of this Group, and will render on-top of everything already in this Group.
+*
+* As well as an array you can also pass another Group as the first argument. In this case all of the children from that
+* Group will be removed from it and added into this Group.
 *
 * @method Phaser.Group#addMultiple
-* @param {DisplayObject[]} children - An array of display objects to add as children.
+* @param {DisplayObject[]|Phaser.Group} children - An array of display objects or a Phaser.Group. If a Group is given then *all* children will be moved from it.
 * @param {boolean} [silent=false] - If true the children will not dispatch the `onAddedToGroup` event.
-* @return {DisplayObject[]} The array of children that were added to the group.
+* @return {DisplayObject[]|Phaser.Group} The array of children or Group of children that were added to this Group.
 */
 Phaser.Group.prototype.addMultiple = function (children, silent) {
 
-    if (Array.isArray(children))
+    if (children instanceof Phaser.Group)
+    {
+        children.moveAll(this, silent);
+    }
+    else if (Array.isArray(children))
     {
         for (var i = 0; i < children.length; i++)
         {
@@ -3398,16 +3834,18 @@ Phaser.Group.prototype.addAt = function (child, index, silent) {
 
     if (child.parent !== this)
     {
-        if (this.enableBody)
+        this.addChildAt(child, index);
+
+        this.updateZ();
+
+        if (this.enableBody && child.body === null)
         {
             this.game.physics.enable(child, this.physicsBodyType);
         }
-
-        this.addChildAt(child, index);
-
-        this._hash.push(child);
-
-        this.updateZ();
+        else if (child.body)
+        {
+            this.addToHash(child);
+        }
 
         if (!silent && child.events)
         {
@@ -3429,7 +3867,7 @@ Phaser.Group.prototype.addAt = function (child, index, silent) {
 *
 * @method Phaser.Group#getAt
 * @param {integer} index - The index to return the child from.
-* @return {DisplayObject} The child that was found at the given index, or -1 for an invalid index.
+* @return {DisplayObject|integer} The child that was found at the given index, or -1 for an invalid index.
 */
 Phaser.Group.prototype.getAt = function (index) {
 
@@ -3463,20 +3901,18 @@ Phaser.Group.prototype.create = function (x, y, key, frame, exists) {
 
     var child = new this.classType(this.game, x, y, key, frame);
 
-    if (this.enableBody)
-    {
-        this.game.physics.enable(child, this.physicsBodyType, this.enableBodyDebug);
-    }
-
     child.exists = exists;
     child.visible = exists;
     child.alive = exists;
 
     this.addChild(child);
 
-    this._hash.push(child);
-
     child.z = this.children.length;
+
+    if (this.enableBody)
+    {
+        this.game.physics.enable(child, this.physicsBodyType, this.enableBodyDebug);
+    }
 
     if (child.events)
     {
@@ -3498,7 +3934,7 @@ Phaser.Group.prototype.create = function (x, y, key, frame, exists) {
 * Useful if you need to quickly generate a pool of identical sprites, such as bullets.
 *
 * By default the sprites will be set to not exist and will be positioned at 0, 0 (relative to the group.x/y).
-* Use {@link #classType} to change the type of object creaded.
+* Use {@link #classType} to change the type of object created.
 *
 * @method Phaser.Group#createMultiple
 * @param {integer} quantity - The number of Sprites to create.
@@ -3518,7 +3954,7 @@ Phaser.Group.prototype.createMultiple = function (quantity, key, frame, exists) 
 };
 
 /**
-* Internal method that re-applies all of the childrens Z values.
+* Internal method that re-applies all of the children's Z values.
 *
 * This must be called whenever children ordering is altered so that their `z` indices are correctly updated.
 *
@@ -4324,6 +4760,12 @@ Phaser.Group.prototype.callAll = function (method, context) {
 */
 Phaser.Group.prototype.preUpdate = function () {
 
+    if (this.pendingDestroy)
+    {
+        this.destroy();
+        return false;
+    }
+
     if (!this.exists || !this.parent.exists)
     {
         this.renderOrderID = -1;
@@ -4458,7 +4900,10 @@ Phaser.Group.prototype.forEach = function (callback, callbackContext, checkExist
         // Using an array and pushing each element (not a slice!) is _significantly_ faster.
         var args = [null];
 
-        for (var i = 3; i < arguments.length; i++) { args.push(arguments[i]); }
+        for (var i = 3; i < arguments.length; i++)
+        {
+            args.push(arguments[i]);
+        }
 
         for (var i = 0; i < this.children.length; i++)
         {
@@ -4902,12 +5347,7 @@ Phaser.Group.prototype.remove = function (child, destroy, silent) {
 
     var removed = this.removeChild(child);
 
-    var index = this._hash.indexOf(removed);
-
-    if (index !== -1)
-    {
-        this._hash.splice(index, 1);
-    }
+    this.removeFromHash(child);
 
     this.updateZ();
 
@@ -4922,6 +5362,35 @@ Phaser.Group.prototype.remove = function (child, destroy, silent) {
     }
 
     return true;
+
+};
+
+/**
+* Moves all children from this Group to the Group given.
+*
+* @method Phaser.Group#moveAll
+* @param {Phaser.Group} group - The new Group to which the children will be moved to.
+* @param {boolean} [silent=false] - If true the children will not dispatch the `onAddedToGroup` event for the new Group.
+* @return {Phaser.Group} The Group to which all the children were moved.
+*/
+Phaser.Group.prototype.moveAll = function (group, silent) {
+
+    if (typeof silent === 'undefined') { silent = false; }
+
+    if (this.children.length > 0 && group instanceof Phaser.Group)
+    {
+        do
+        {
+            group.add(this.children[0], silent);
+        }
+        while (this.children.length > 0);
+
+        this.hash = [];
+
+        this.cursor = null;
+    }
+
+    return group;
 
 };
 
@@ -4951,12 +5420,7 @@ Phaser.Group.prototype.removeAll = function (destroy, silent) {
 
         var removed = this.removeChild(this.children[0]);
 
-        var index = this._hash.indexOf(removed);
-
-        if (index !== -1)
-        {
-            this._hash.splice(index, 1);
-        }
+        this.removeFromHash(removed);
 
         if (destroy && removed)
         {
@@ -4965,7 +5429,7 @@ Phaser.Group.prototype.removeAll = function (destroy, silent) {
     }
     while (this.children.length > 0);
 
-    this._hash = [];
+    this.hash = [];
 
     this.cursor = null;
 
@@ -5007,12 +5471,7 @@ Phaser.Group.prototype.removeBetween = function (startIndex, endIndex, destroy, 
 
         var removed = this.removeChild(this.children[i]);
 
-        var index = this._hash.indexOf(removed);
-
-        if (index !== -1)
-        {
-            this._hash.splice(index, 1);
-        }
+        this.removeFromHash(removed);
 
         if (destroy && removed)
         {
@@ -5053,6 +5512,7 @@ Phaser.Group.prototype.destroy = function (destroyChildren, soft) {
 
     this.cursor = null;
     this.filters = null;
+    this.pendingDestroy = false;
 
     if (!soft)
     {
@@ -5486,11 +5946,11 @@ Object.defineProperty(Phaser.World.prototype, "randomX", {
 
         if (this.bounds.x < 0)
         {
-            return this.game.rnd.integerInRange(this.bounds.x, (this.bounds.width - Math.abs(this.bounds.x)));
+            return this.game.rnd.between(this.bounds.x, (this.bounds.width - Math.abs(this.bounds.x)));
         }
         else
         {
-            return this.game.rnd.integerInRange(this.bounds.x, this.bounds.width);
+            return this.game.rnd.between(this.bounds.x, this.bounds.width);
         }
 
     }
@@ -5508,11 +5968,11 @@ Object.defineProperty(Phaser.World.prototype, "randomY", {
 
         if (this.bounds.y < 0)
         {
-            return this.game.rnd.integerInRange(this.bounds.y, (this.bounds.height - Math.abs(this.bounds.y)));
+            return this.game.rnd.between(this.bounds.y, (this.bounds.height - Math.abs(this.bounds.y)));
         }
         else
         {
-            return this.game.rnd.integerInRange(this.bounds.y, this.bounds.height);
+            return this.game.rnd.between(this.bounds.y, this.bounds.height);
         }
 
     }
@@ -6140,15 +6600,6 @@ Phaser.ScaleManager = function (game, width, height) {
     this._pageAlignVertically = false;
 
     /**
-    * The maximum number of times a canvas will be resized (in a row) in order to fill the browser.
-    * @property {number} maxIterations    
-    * @protected
-    * @see {@link Phaser.ScaleManger#refresh refresh}
-    * @deprecated 2.2.0 - This is not used anymore as reflow iterations are "automatic".
-    */
-    this.maxIterations = 5;
-
-    /**
     * This signal is dispatched when the orientation changes _or_ the validity of the current orientation changes.
     * 
     * The signal is supplied with the following arguments:
@@ -6173,28 +6624,6 @@ Phaser.ScaleManager = function (game, width, height) {
     * @public
     */
     this.onOrientationChange = new Phaser.Signal();
-
-    /**
-    * This signal is dispatched when the browser enters landscape orientation, having been in portrait.
-    *
-    * This is signaled from  `preUpdate` (or `pauseUpdate`) _even when_ the game is paused.
-    *
-    * @property {Phaser.Signal} enterLandscape
-    * @public
-    * @deprecated 2.2.0 - Use {@link Phaser.ScaleManager#onOrientationChange onOrientationChange}
-    */
-    this.enterLandscape = new Phaser.Signal();
-
-    /**
-    * This signal is dispatched when the browser enters portrait orientation, having been in landscape.
-    *
-    * This is signaled from `preUpdate` (or `pauseUpdate`) _even when_ the game is paused.
-    *
-    * @property {Phaser.Signal} enterPortrait
-    * @public
-    * @deprecated 2.2.0 - Use {@link Phaser.ScaleManager#onOrientationChange onOrientationChange}
-    */
-    this.enterPortrait = new Phaser.Signal();
 
     /**
     * This signal is dispatched when the browser enters an incorrect orientation, as defined by {@link #forceOrientation}.
@@ -6283,34 +6712,6 @@ Phaser.ScaleManager = function (game, width, height) {
     * @public
     */
     this.onFullScreenError = new Phaser.Signal();
-
-    /**
-    * This signal is dispatched when the browser enters fullscreen mode, if supported.
-    *
-    * @property {Phaser.Signal} enterFullScreen
-    * @public
-    * @deprecated 2.2.0 - Use {@link Phaser.ScaleManager#onFullScreenChange onFullScreenChange}
-    */
-    this.enterFullScreen = new Phaser.Signal();
-
-    /**
-    * This signal is dispatched when the browser leaves fullscreen mode.
-    *
-    * @property {Phaser.Signal} leaveFullScreen
-    * @public
-    * @deprecated 2.2.0 - Use {@link Phaser.ScaleManager#onFullScreenChange onFullScreenChange}
-    */
-    this.leaveFullScreen = new Phaser.Signal();
-
-    /**
-    * This signal is dispatched when the browser fails to enter fullscreen mode;
-    * or if the device does not support fullscreen mode and {@link #startFullScreen} is invoked.
-    *
-    * @property {Phaser.Signal} fullScreenFailed
-    * @public
-    * @deprecated 2.2.0 - Use {@link Phaser.ScaleManager#onFullScreenError onFullScreenError}
-    */
-    this.fullScreenFailed = this.onFullScreenError;
 
     /**
     * The _last known_ orientation of the screen, as defined in the Window Screen Web API.
@@ -6513,6 +6914,12 @@ Phaser.ScaleManager = function (game, width, height) {
     this.onResizeContext = null;
 
     /**
+    * @property {integer} _pendingScaleMode - Used to retain the scale mode if set from config before Boot.
+    * @private
+    */
+    this._pendingScaleMode = null;
+
+    /**
     * Information saved when fullscreen mode is started.
     * @property {?object} _fullScreenRestore
     * @private
@@ -6591,6 +6998,12 @@ Phaser.ScaleManager = function (game, width, height) {
     */
     this._lastReportedGameSize = new Phaser.Rectangle();
 
+    /**
+    * @property {boolean} _booted - ScaleManager booted state.
+    * @private
+    */
+    this._booted = false;
+
     if (game.config)
     {
         this.parseConfig(game.config);
@@ -6639,7 +7052,6 @@ Phaser.ScaleManager.RESIZE = 3;
 * @type {integer}
 */
 Phaser.ScaleManager.USER_SCALE = 4;
-
 
 Phaser.ScaleManager.prototype = {
 
@@ -6733,6 +7145,14 @@ Phaser.ScaleManager.prototype = {
 
         this.grid = new Phaser.FlexGrid(this, this.width, this.height);
 
+        this._booted = true;
+
+        if (this._pendingScaleMode)
+        {
+            this.scaleMode = this._pendingScaleMode;
+            this._pendingScaleMode = null;
+        }
+
     },
 
     /**
@@ -6746,7 +7166,14 @@ Phaser.ScaleManager.prototype = {
 
         if (config['scaleMode'])
         {
-            this.scaleMode = config['scaleMode'];
+            if (this._booted)
+            {
+                this.scaleMode = config['scaleMode'];
+            }
+            else
+            {
+                this._pendingScaleMode = config['scaleMode'];
+            }
         }
 
         if (config['fullScreenScaleMode'])
@@ -7206,18 +7633,6 @@ Phaser.ScaleManager.prototype = {
 
         var changed = previousOrientation !== this.screenOrientation;
         var correctnessChanged = previouslyIncorrect !== this.incorrectOrientation;
-
-        if (changed)
-        {
-            if (this.isLandscape)
-            {
-                this.enterLandscape.dispatch(this.orientation, true, false);
-            }
-            else
-            {
-                this.enterPortrait.dispatch(this.orientation, false, true);
-            }
-        }
 
         if (correctnessChanged)
         {
@@ -7992,7 +8407,13 @@ Phaser.ScaleManager.prototype = {
         if (typeof height === 'undefined') { height = this.height; }
         if (typeof letterBox === 'undefined') { letterBox = false; }
 
-        sprite.scale.set(1);
+        if (!sprite || !sprite['scale'])
+        {
+            return sprite;
+        }
+
+        sprite.scale.x = 1;
+        sprite.scale.y = 1;
 
         if ((sprite.width <= 0) || (sprite.height <= 0) || (width <= 0) || (height <= 0))
         {
@@ -8067,76 +8488,6 @@ Phaser.ScaleManager.prototype = {
 };
 
 Phaser.ScaleManager.prototype.constructor = Phaser.ScaleManager;
-
-/**
-* window.resize event handler.
-* @method checkResize
-* @memberof Phaser.ScaleManager
-* @protected
-* @deprecated 2.2.0 - This method is INTERNAL: avoid using it directly.
-*/
-Phaser.ScaleManager.prototype.checkResize = Phaser.ScaleManager.prototype.windowResize;
-
-/**
-* window.orientationchange event handler.
-* @method checkOrientation
-* @memberof Phaser.ScaleManager
-* @protected
-* @deprecated 2.2.0 - This method is INTERNAL: avoid using it directly.
-*/
-Phaser.ScaleManager.prototype.checkOrientation = Phaser.ScaleManager.prototype.orientationChange;
-
-/**
-* Updates the size of the Game or the size/position of the Display canvas based on internal state.
-*
-* Do not call this directly. To "refresh" the layout use {@link Phaser.ScaleManager#refresh refresh}.
-* To precisely control the scaling/size, apply appropriate rules to the bounding Parent container or
-* use the {@link Phaser.ScaleManager#scaleMode USER_SCALE scale mode}.
-*
-* @method Phaser.ScaleManager#setScreenSize
-* @protected
-* @deprecated 2.2.0 - This method is INTERNAL: avoid using it directly.
-*/
-Phaser.ScaleManager.prototype.setScreenSize = Phaser.ScaleManager.prototype.updateLayout;
-
-/**
-* Updates the size/position of the Display canvas based on internal state.
-*
-* Do not call this directly. To "refresh" the layout use {@link Phaser.ScaleManager#refresh refresh}.
-* To precisely control the scaling/size, apply appropriate rules to the bounding Parent container or
-* use the {@link Phaser.ScaleManager#scaleMode USER_SCALE scale mode}.
-*
-* @method setSize
-* @memberof Phaser.ScaleManager
-* @protected
-* @deprecated 2.2.0 - This method is INTERNAL: avoid using it directly.
-*/
-Phaser.ScaleManager.prototype.setSize = Phaser.ScaleManager.prototype.reflowCanvas;
-
-/**
-* Checks if the browser is in the correct orientation for the game,
-* dependent upon {@link #forceLandscape} and {@link #forcePortrait}, and updates the state.
-*
-* The appropriate event is dispatched if the orientation became valid or invalid.
-* 
-* @method checkOrientationState
-* @memberof Phaser.ScaleManager
-* @protected
-* @return {boolean} True if the orientation state changed (consider a refresh)
-* @deprecated 2.2.0 - This is only for backward compatibility of user code.
-*/
-Phaser.ScaleManager.prototype.checkOrientationState = function () {
-
-    var changed = this.updateOrientationState();
-
-    if (changed)
-    {
-        this.refresh();
-    }
-
-    return changed;
-
-};
 
 /**
 * The DOM element that is considered the Parent bounding element, if any.
@@ -8402,21 +8753,6 @@ Object.defineProperty(Phaser.ScaleManager.prototype, "isLandscape", {
 
     get: function () {
         return this.classifyOrientation(this.screenOrientation) === 'landscape';
-    }
-
-});
-
-/**
-* The _last known_ orientation value of the screen. A value of 90 is landscape and 0 is portrait.
-* @name Phaser.ScaleManager#orientation
-* @property {integer} orientation
-* @readonly
-* @deprecated 2.2.0 - Use {@link #screenOrientation} instead.
-*/
-Object.defineProperty(Phaser.ScaleManager.prototype, "orientation", {
-
-    get: function () {
-        return (this.classifyOrientation(this.screenOrientation) === 'portrait' ? 0 : 90);
     }
 
 });
@@ -8702,7 +9038,7 @@ Phaser.Game = function (width, height, renderer, parent, state, transparent, ant
     this.context = null;
 
     /**
-    * @property {Phaser.Utils.Debug} debug - A set of useful debug utilitie.
+    * @property {Phaser.Utils.Debug} debug - A set of useful debug utilities.
     */
     this.debug = null;
 
@@ -8710,6 +9046,11 @@ Phaser.Game = function (width, height, renderer, parent, state, transparent, ant
     * @property {Phaser.Particles} particles - The Particle Manager.
     */
     this.particles = null;
+
+    /**
+    * @property {Phaser.Create} create - The Asset Generator.
+    */
+    this.create = null;
 
     /**
     * If `false` Phaser will automatically render the display list every update. If `true` the render loop will be skipped.
@@ -9001,6 +9342,7 @@ Phaser.Game.prototype = {
         this.sound = new Phaser.SoundManager(this);
         this.physics = new Phaser.Physics(this, this.physicsConfig);
         this.particles = new Phaser.Particles(this);
+        this.create = new Phaser.Create(this);
         this.plugins = new Phaser.PluginManager(this);
         this.net = new Phaser.Net(this);
 
@@ -9466,6 +9808,12 @@ Phaser.Game.prototype = {
             this.time.gamePaused();
             this.sound.setMute();
             this.onPause.dispatch(event);
+
+            //  Avoids Cordova iOS crash event: https://github.com/photonstorm/phaser/issues/1800
+            if (this.device.cordova && this.device.iOS)
+            {
+                this.lockRender = true;
+            }
         }
 
     },
@@ -9487,6 +9835,12 @@ Phaser.Game.prototype = {
             this.input.reset();
             this.sound.unsetMute();
             this.onResume.dispatch(event);
+
+            //  Avoids Cordova iOS crash event: https://github.com/photonstorm/phaser/issues/1800
+            if (this.device.cordova && this.device.iOS)
+            {
+                this.lockRender = false;
+            }
         }
 
     },
@@ -9574,5 +9928,9 @@ Object.defineProperty(Phaser.Game.prototype, "paused", {
 });
 
 /**
-* "Deleted code is debugged code." - Jeff Sickel
+ * 
+ * "Deleted code is debugged code." - Jeff Sickel
+ *
+ * ヽ(〃＾▽＾〃)ﾉ
+ * 
 */

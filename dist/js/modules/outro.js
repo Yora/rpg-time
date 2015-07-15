@@ -41,6 +41,10 @@ if (PIXI.Graphics.POLY === undefined)
     PIXI.Graphics.RREC = Phaser.ROUNDEDRECTANGLE;
 }
 
+PIXI.TextureSilentFail = true;
+
+PIXI.BitmapText = { fonts: {} };
+
 /**
 * @author       Richard Davey <rich@photonstorm.com>
 * @copyright    2015 Photon Storm Ltd.

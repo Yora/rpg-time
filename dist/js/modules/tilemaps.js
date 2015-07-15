@@ -5,6 +5,137 @@
 */
 
 /**
+* An Image Collection is a special tileset containing mulitple images, with no slicing into each image.
+*
+* Image Collections are normally created automatically when Tiled data is loaded.
+*
+* @class Phaser.ImageCollection
+* @constructor
+* @param {string} name - The name of the image collection in the map data.
+* @param {integer} firstgid - The first image index this image collection contains.
+* @param {integer} [width=32] - Width of widest image (in pixels).
+* @param {integer} [height=32] - Height of tallest image (in pixels).
+* @param {integer} [margin=0] - The margin around all images in the collection (in pixels).
+* @param {integer} [spacing=0] - The spacing between each image in the collection (in pixels).
+* @param {object} [properties={}] - Custom Image Collection properties.
+*/
+Phaser.ImageCollection = function (name, firstgid, width, height, margin, spacing, properties) {
+
+    if (typeof width === 'undefined' || width <= 0) { width = 32; }
+    if (typeof height === 'undefined' || height <= 0) { height = 32; }
+    if (typeof margin === 'undefined') { margin = 0; }
+    if (typeof spacing === 'undefined') { spacing = 0; }
+
+    /**
+    * The name of the Image Collection.
+    * @property {string} name
+    */
+    this.name = name;
+
+    /**
+    * The Tiled firstgid value.
+    * This is the starting index of the first image index this Image Collection contains.
+    * @property {integer} firstgid
+    */
+    this.firstgid = firstgid | 0;
+
+    /**
+    * The width of the widest image (in pixels).
+    * @property {integer} imageWidth
+    * @readonly
+    */
+    this.imageWidth = width | 0;
+
+    /**
+    * The height of the tallest image (in pixels).
+    * @property {integer} imageHeight
+    * @readonly
+    */
+    this.imageHeight = height | 0;
+
+    /**
+    * The margin around the images in the collection (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} imageMarge
+    * @readonly
+    */
+    // Modified internally
+    this.imageMargin = margin | 0;
+
+    /**
+    * The spacing between each image in the collection (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} imageSpacing
+    * @readonly
+    */
+    this.imageSpacing = spacing | 0;
+
+    /**
+    * Image Collection-specific properties that are typically defined in the Tiled editor.
+    * @property {object} properties
+    */
+    this.properties = properties || {};
+
+    /**
+    * The cached images that are a part of this collection.
+    * @property {array} images
+    * @readonly
+    */
+    // Modified internally
+    this.images = [];
+
+    /**
+    * The total number of images in the image collection.
+    * @property {integer} total
+    * @readonly
+    */
+    // Modified internally
+    this.total = 0;
+};
+
+Phaser.ImageCollection.prototype = {
+
+    /**
+    * Returns true if and only if this image collection contains the given image index.
+    *
+    * @method Phaser.ImageCollection#containsImageIndex
+    * @param {integer} imageIndex - The image index to search for.
+    * @return {boolean} True if this Image Collection contains the given index.
+    */
+    containsImageIndex: function (imageIndex) {
+
+        return (
+            imageIndex >= this.firstgid &&
+            imageIndex < (this.firstgid + this.total)
+        );
+
+    },
+
+    /**
+    * Add an image to this Image Collection.
+    *
+    * @method Phaser.ImageCollection#addImage
+    * @param {integer} gid - The gid of the image in the Image Collection.
+    * @param {string} image - The the key of the image in the Image Collection and in the cache.
+    */
+    addImage: function (gid, image) {
+
+        this.images.push({ gid: gid, image: image });
+        this.total++;
+
+    }
+
+};
+
+Phaser.ImageCollection.prototype.constructor = Phaser.ImageCollection;
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2015 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
 * A Tile is a representation of a single tile within the Tilemap.
 *
 * @class Phaser.Tile
@@ -508,6 +639,11 @@ Phaser.Tilemap = function (game, key, tileWidth, tileHeight, width, height) {
     * @property {array} tilesets - An array of Tilesets.
     */
     this.tilesets = data.tilesets;
+    
+    /**
+    * @property {array} imagecollections - An array of Image Collections.
+    */
+    this.imagecollections = data.imagecollections;
 
     /**
     * @property {array} tiles - The super array of Tiles.
@@ -651,7 +787,9 @@ Phaser.Tilemap.prototype = {
     *
     * @method Phaser.Tilemap#addTilesetImage
     * @param {string} tileset - The name of the tileset as specified in the map data.
-    * @param {string} [key] - The key of the Phaser.Cache image used for this tileset. If not specified it will look for an image with a key matching the tileset parameter.
+    * @param {string|Phaser.BitmapData} [key] - The key of the Phaser.Cache image used for this tileset.
+    *     If `undefined` or `null` it will look for an image with a key matching the tileset parameter.
+    *     You can also pass in a BitmapData which can be used instead of an Image.
     * @param {number} [tileWidth=32] - The width of the tiles in the Tileset Image. If not given it will default to the map.tileWidth value, if that isn't set then 32.
     * @param {number} [tileHeight=32] - The height of the tiles in the Tileset Image. If not given it will default to the map.tileHeight value, if that isn't set then 32.
     * @param {number} [tileMargin=0] - The width of the tiles in the Tileset Image. If not given it will default to the map.tileWidth value.
@@ -661,6 +799,7 @@ Phaser.Tilemap.prototype = {
     */
     addTilesetImage: function (tileset, key, tileWidth, tileHeight, tileMargin, tileSpacing, gid) {
 
+        if (typeof tileset === 'undefined') { return null; }
         if (typeof tileWidth === 'undefined') { tileWidth = this.tileWidth; }
         if (typeof tileHeight === 'undefined') { tileHeight = this.tileHeight; }
         if (typeof tileMargin === 'undefined') { tileMargin = 0; }
@@ -678,45 +817,46 @@ Phaser.Tilemap.prototype = {
             tileHeight = 32;
         }
 
-        if (typeof key === 'undefined')
-        {
-            if (typeof tileset === 'string')
-            {
-                key = tileset;
+        var img = null;
 
-                if (!this.game.cache.checkImageKey(key))
-                {
-                    console.warn('Phaser.Tilemap.addTilesetImage: Invalid image key given: "' + key + '"');
-                    return null;
-                }
-            }
-            else
-            {
-                return null;
-            }
+        if (typeof key === 'undefined' || key === null)
+        {
+            key = tileset;
         }
 
-        if (typeof tileset === 'string')
+        if (key instanceof Phaser.BitmapData)
         {
-            tileset = this.getTilesetIndex(tileset);
-
-            if (tileset === null && this.format === Phaser.Tilemap.TILED_JSON)
-            {
-                console.warn('Phaser.Tilemap.addTilesetImage: No data found in the JSON matching the tileset name: "' + key + '"');
-                return null;
-            }
-        }
-
-        if (this.tilesets[tileset])
-        {
-            this.tilesets[tileset].setImage(this.game.cache.getImage(key));
-            return this.tilesets[tileset];
+            img = key.canvas;
         }
         else
         {
-            var newSet = new Phaser.Tileset(key, gid, tileWidth, tileHeight, tileMargin, tileSpacing, {});
+            if (!this.game.cache.checkImageKey(key))
+            {
+                console.warn('Phaser.Tilemap.addTilesetImage: Invalid image key given: "' + key + '"');
+                return null;
+            }
 
-            newSet.setImage(this.game.cache.getImage(key));
+            img = this.game.cache.getImage(key);
+        }
+
+        var idx = this.getTilesetIndex(tileset);
+
+        if (idx === null && this.format === Phaser.Tilemap.TILED_JSON)
+        {
+            console.warn('Phaser.Tilemap.addTilesetImage: No data found in the JSON matching the tileset name: "' + key + '"');
+            return null;
+        }
+
+        if (this.tilesets[idx])
+        {
+            this.tilesets[idx].setImage(img);
+            return this.tilesets[idx];
+        }
+        else
+        {
+            var newSet = new Phaser.Tileset(tileset, gid, tileWidth, tileHeight, tileMargin, tileSpacing, {});
+
+            newSet.setImage(img);
 
             this.tilesets.push(newSet);
 
@@ -798,10 +938,35 @@ Phaser.Tilemap.prototype = {
         }
 
         var sprite;
+        var found = false;
 
         for (var i = 0, len = this.objects[name].length; i < len; i++)
         {
-            if (this.objects[name][i].gid === gid)
+            if (typeof this.objects[name][i].gid !== 'undefined' && typeof gid === 'number')
+            {
+                if (this.objects[name][i].gid === gid)
+                {
+                    found = true;
+                }
+            }
+
+            if (typeof this.objects[name][i].id !== 'undefined' && typeof gid === 'number')
+            {
+                if (this.objects[name][i].id === gid)
+                {
+                    found = true;
+                }
+            }
+
+            if (typeof this.objects[name][i].name !== 'undefined' && typeof gid === 'string')
+            {
+                if (this.objects[name][i].name === gid)
+                {
+                    found = true;
+                }
+            }
+
+            if (found)
             {
                 sprite = new CustomClass(this.game, this.objects[name][i].x, this.objects[name][i].y, key, frame);
 
@@ -809,6 +974,9 @@ Phaser.Tilemap.prototype = {
                 sprite.visible = this.objects[name][i].visible;
                 sprite.autoCull = autoCull;
                 sprite.exists = exists;
+
+                sprite.width = this.objects[name][i].width;
+                sprite.height = this.objects[name][i].height;
 
                 if (this.objects[name][i].rotation)
                 {
@@ -1863,9 +2031,10 @@ Phaser.Tilemap.prototype = {
     * @param {number} [tileWidth] - The width of the tiles. If not given the map default is used.
     * @param {number} [tileHeight] - The height of the tiles. If not given the map default is used.
     * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to get the tile from.
+    * @param {boolean} [nonNull=false] - If true getTile won't return null for empty tiles, but a Tile object with an index of -1.
     * @return {Phaser.Tile} The tile at the given coordinates.
     */
-    getTileWorldXY: function (x, y, tileWidth, tileHeight, layer) {
+    getTileWorldXY: function (x, y, tileWidth, tileHeight, layer, nonNull) {
 
         if (typeof tileWidth === 'undefined') { tileWidth = this.tileWidth; }
         if (typeof tileHeight === 'undefined') { tileHeight = this.tileHeight; }
@@ -1875,7 +2044,7 @@ Phaser.Tilemap.prototype = {
         x = this.game.math.snapToFloor(x, tileWidth) / tileWidth;
         y = this.game.math.snapToFloor(y, tileHeight) / tileHeight;
 
-        return this.getTile(x, y, layer);
+        return this.getTile(x, y, layer, nonNull);
 
     },
 
@@ -2320,7 +2489,7 @@ Object.defineProperty(Phaser.Tilemap.prototype, "layer", {
 * By default TilemapLayers have fixedToCamera set to `true`. Changing this will break Camera follow and scrolling behavior.
 *
 * @class Phaser.TilemapLayer
-* @extends {Phaser.Image}
+* @extends Phaser.Sprite
 * @constructor
 * @param {Phaser.Game} game - Game reference to the currently running game.
 * @param {Phaser.Tilemap} tilemap - The tilemap to which this layer belongs.
@@ -2333,9 +2502,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
     width |= 0;
     height |= 0;
 
-    PIXI.Sprite.call(this, PIXI.TextureCache['__default']);
-
-    Phaser.Component.Core.init.call(this, game, 0, 0, null, null);
+    Phaser.Sprite.call(this, game, 0, 0);
 
     /**
     * The Tilemap to which this layer is bound.
@@ -2355,7 +2522,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
 
     /**
     * The layer object within the Tilemap that this layer represents.
-    * @property {Phaser.TileLayer} layer
+    * @property {object} layer
     * @protected
     * @readonly
     */
@@ -2375,26 +2542,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
     */
     this.context = this.canvas.getContext('2d');
 
-    /**
-    * Required Pixi var.
-    * @property {PIXI.BaseTexture} baseTexture
-    * @protected
-    */
-    this.baseTexture = new PIXI.BaseTexture(this.canvas);
-
-    /**
-    * Required Pixi var.
-    * @property {PIXI.Texture} texture
-    * @protected
-    */
-    this.texture = new PIXI.Texture(this.baseTexture);
-
-    /**
-    * Dimensions of the renderable area.
-    * @property {Phaser.Frame} textureFrame
-    * @protected
-    */
-    this.textureFrame = new Phaser.Frame(0, 0, 0, width, height, 'tilemapLayer', game.rnd.uuid());
+    this.setTexture(new PIXI.Texture(new PIXI.BaseTexture(this.canvas)));
 
     /**
     * The const type of this object.
@@ -2414,7 +2562,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
     /**
     * Settings that control standard (non-diagnostic) rendering.
     *
-    * @property {boolean} [enableScrollDelta=true] - Delta scroll rendering only draws tiles/edges as them come into view.
+    * @property {boolean} [enableScrollDelta=true] - Delta scroll rendering only draws tiles/edges as they come into view.
     *     This can greatly improve scrolling rendering performance, especially when there are many small tiles.
     *     It should only be disabled in rare cases.
     *
@@ -2425,7 +2573,7 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
     * @default
     */
     this.renderSettings = {
-        enableScrollDelta: true,
+        enableScrollDelta: false,
         overdrawRatio: 0.20,
         copyCanvas: null
     };
@@ -2566,18 +2714,10 @@ Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
 
 };
 
-Phaser.TilemapLayer.prototype = Object.create(PIXI.Sprite.prototype);
+Phaser.TilemapLayer.prototype = Object.create(Phaser.Sprite.prototype);
 Phaser.TilemapLayer.prototype.constructor = Phaser.TilemapLayer;
 
-var components = [
-    'Bounds',
-    'Destroy',
-    'FixedToCamera',
-    'Reset',
-    'Smoothed'
-];
-
-Phaser.Component.Core.install.call(Phaser.TilemapLayer.prototype, components);
+Phaser.TilemapLayer.prototype.preUpdateCore = Phaser.Component.Core.preUpdate;
 
 /**
 * The shared double-copy canvas, created as needed.
@@ -2614,9 +2754,7 @@ Phaser.TilemapLayer.ensureSharedCopyCanvas = function () {
 */
 Phaser.TilemapLayer.prototype.preUpdate = function() {
 
-    Phaser.Component.Core.preUpdate.call(this);
-
-    return true;
+    return this.preUpdateCore();
 
 };
 
@@ -2628,7 +2766,7 @@ Phaser.TilemapLayer.prototype.preUpdate = function() {
 */
 Phaser.TilemapLayer.prototype.postUpdate = function () {
 
-    Phaser.Component.Core.prototype.postUpdate.call(this);
+    Phaser.Component.FixedToCamera.postUpdate.call(this);
 
     //  Stops you being able to auto-scroll the camera if it's not following a sprite
     var camera = this.game.camera;
@@ -2637,6 +2775,44 @@ Phaser.TilemapLayer.prototype.postUpdate = function () {
     this.scrollY = camera.y * this.scrollFactorY / this.scale.y;
 
     this.render();
+
+};
+
+/**
+* Resizes the internal canvas and texture frame used by this TilemapLayer.
+*
+* This is an expensive call, so don't bind it to a window resize event! But instead call it at carefully
+* selected times.
+*
+* Be aware that no validation of the new sizes takes place and the current map scroll coordinates are not
+* modified either. You will have to handle both of these things from your game code if required.
+* 
+* @method Phaser.TilemapLayer#resize
+* @param {number} width - The new width of the TilemapLayer
+* @param {number} height - The new height of the TilemapLayer
+*/
+Phaser.TilemapLayer.prototype.resize = function (width, height) {
+
+    this.canvas.width = width;
+    this.canvas.height = height;
+
+    this.texture.frame.resize(width, height);
+
+    this.texture.width = width;
+    this.texture.height = height;
+
+    this.texture.crop.width = width;
+    this.texture.crop.height = height;
+
+    this.texture.baseTexture.width = width;
+    this.texture.baseTexture.height = height;
+
+    this.texture.baseTexture.dirty();
+    this.texture.requiresUpdate = true;
+
+    this.texture._updateUvs();
+
+    this.dirty = true;
 
 };
 
@@ -2876,6 +3052,7 @@ Phaser.TilemapLayer.prototype.getTiles = function (x, y, width, height, collides
         for (var wx = tx; wx < tx + tw; wx++)
         {
             var row = this.layer.data[wy];
+
             if (row && row[wx])
             {
                 if (fetchAll || row[wx].isInteresting(collides, interestingFace))
@@ -2891,49 +3068,6 @@ Phaser.TilemapLayer.prototype.getTiles = function (x, y, width, height, collides
 };
 
 /**
-* If no valid tileset/image can be found for a tile, the tile is rendered as a rectangle using this as a fill value.
-*
-* Set to `null` to disable rendering anything for tiles without value tileset images.
-*
-* @property {?string} tileColor
-* @memberof Phaser.TilemapLayer
-* @default 'rgb(255, 255, 255)'
-* @deprecated Use `debugSettings.missingImageFill` instead.
-*/
-Object.defineProperty(Phaser.TilemapLayer.prototype, 'tileColor', {
-
-    get: function () {
-        return this.debugSettings.missingImageFill;
-    },
-
-    set: function (value) {
-        this.debugSettings.missingImageFill = value;
-    }
-
-});
-
-/**
-* Flag controlling if the layer tiles wrap at the edges. Only works if the World size matches the Map size.
-*
-* @property {boolean} wrap
-* @memberof Phaser.TilemapLayer
-* @public
-* @default false
-*/
-Object.defineProperty(Phaser.TilemapLayer.prototype, "wrap", {
-
-    get: function () {
-        return this._wrap;
-    },
-
-    set: function (value) {
-        this._wrap = value;
-        this.dirty = true;
-    }
-
-});
-
-/**
 * Returns the appropriate tileset for the index, updating the internal cache as required.
 * This should only be called if `tilesets[index]` evaluates to undefined.
 *
@@ -2942,8 +3076,8 @@ Object.defineProperty(Phaser.TilemapLayer.prototype, "wrap", {
 * @param {integer} Tile index
 * @return {Phaser.Tileset|null} Returns the associated tileset or null if there is no such mapping.
 */
-Phaser.TilemapLayer.prototype.resolveTileset = function (tileIndex)
-{
+Phaser.TilemapLayer.prototype.resolveTileset = function (tileIndex) {
+
     var tilesets = this._mc.tilesets;
 
     //  Try for dense array if reasonable
@@ -2979,8 +3113,7 @@ Phaser.TilemapLayer.prototype.resolveTileset = function (tileIndex)
 * @method Phaser.TilemapLayer#resetTilesetCache
 * @public
 */
-Phaser.TilemapLayer.prototype.resetTilesetCache = function ()
-{
+Phaser.TilemapLayer.prototype.resetTilesetCache = function () {
 
     var tilesets = this._mc.tilesets;
 
@@ -2998,7 +3131,7 @@ Phaser.TilemapLayer.prototype.resetTilesetCache = function ()
  * @param {number} [xScale=1] - The scale factor along the X-plane 
  * @param {number} [yScale] - The scale factor along the Y-plane
  */
-Phaser.TilemapLayer.prototype.setScale = function(xScale, yScale) {
+Phaser.TilemapLayer.prototype.setScale = function (xScale, yScale) {
 
     xScale = xScale || 1;
     yScale = yScale || xScale;
@@ -3034,8 +3167,8 @@ Phaser.TilemapLayer.prototype.setScale = function(xScale, yScale) {
 * @param {integer} x
 * @param {integer} y
 */
-Phaser.TilemapLayer.prototype.shiftCanvas = function (context, x, y)
-{
+Phaser.TilemapLayer.prototype.shiftCanvas = function (context, x, y) {
+
     var canvas = context.canvas;
     var copyW = canvas.width - Math.abs(x);
     var copyH = canvas.height - Math.abs(y);
@@ -3285,6 +3418,7 @@ Phaser.TilemapLayer.prototype.renderDeltaScroll = function (shiftX, shiftY) {
         var trueBottom = Math.floor((renderH - 1 + scrollY) / th);
         this.renderRegion(scrollX, scrollY, left, trueTop, right, trueBottom);
     }
+
     if (top <= bottom)
     {
         // Clear top or bottom edge
@@ -3303,8 +3437,7 @@ Phaser.TilemapLayer.prototype.renderDeltaScroll = function (shiftX, shiftY) {
 * @method Phaser.TilemapLayer#renderFull
 * @private
 */
-Phaser.TilemapLayer.prototype.renderFull = function ()
-{
+Phaser.TilemapLayer.prototype.renderFull = function () {
     
     var scrollX = this._mc.scrollX;
     var scrollY = this._mc.scrollY;
@@ -3406,7 +3539,7 @@ Phaser.TilemapLayer.prototype.render = function () {
         this.renderDebug();
     }
 
-    this.baseTexture.dirty();
+    this.texture.baseTexture.dirty();
 
     this.dirty = false;
 
@@ -3517,6 +3650,27 @@ Phaser.TilemapLayer.prototype.renderDebug = function () {
     }
 
 };
+
+/**
+* Flag controlling if the layer tiles wrap at the edges. Only works if the World size matches the Map size.
+*
+* @property {boolean} wrap
+* @memberof Phaser.TilemapLayer
+* @public
+* @default false
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "wrap", {
+
+    get: function () {
+        return this._wrap;
+    },
+
+    set: function (value) {
+        this._wrap = value;
+        this.dirty = true;
+    }
+
+});
 
 /**
 * Scrolls the map horizontally or returns the current x position.
@@ -3974,8 +4128,9 @@ Phaser.TilemapParser = {
 
         map.images = images;
 
-        //  Tilesets
+        //  Tilesets & Image Collections
         var tilesets = [];
+        var imagecollections = [];
 
         for (var i = 0; i < json.tilesets.length; i++)
         {
@@ -3998,13 +4153,22 @@ Phaser.TilemapParser = {
             }
             else
             {
-                // TODO: Handle Tileset Image Collections (multiple images in a tileset, no slicing into each image)
-                console.warn("Phaser.TilemapParser - Image Collection Tilesets are not support");
+                var newCollection = new Phaser.ImageCollection(set.name, set.firstgid, set.tilewidth, set.tileheight, set.margin, set.spacing, set.properties);
+                
+                for (var i in set.tiles)
+                {
+                    var image = set.tiles[i].image;
+                    var gid = set.firstgid + parseInt(i, 10);
+                    newCollection.addImage(gid, image);
+                }
+
+                imagecollections.push(newCollection);
             }
 
         }
 
         map.tilesets = tilesets;
+        map.imagecollections = imagecollections;
 
         //  Objects & Collision Data (polylines, etc)
         var objects = {};
@@ -4018,7 +4182,7 @@ Phaser.TilemapParser = {
             {
                 var key = fields[k];
 
-                if (obj[key])
+                if (typeof obj[key] !== 'undefined')
                 {
                     sliced[key] = obj[key];
                 }
@@ -4414,8 +4578,8 @@ Phaser.Tileset.prototype = {
     *
     * @method Phaser.Tileset#setSpacing
     * @public
-    * @param {integer} tileMargin - The margin around the tiles in the sheet (in pixels).
-    * @param {integer} tileSpacing - The spacing between the tiles in the sheet (in pixels).
+    * @param {integer} [margin=0] - The margin around the tiles in the sheet (in pixels).
+    * @param {integer} [spacing=0] - The spacing between the tiles in the sheet (in pixels).
     */
     setSpacing: function (margin, spacing) {
 

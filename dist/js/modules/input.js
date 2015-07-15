@@ -32,19 +32,12 @@ Phaser.Input = function (game) {
     this.hitContext = null;
 
     /**
-    * @property {array} moveCallbacks - An array of callbacks that will be fired every time the activePointer receives a move event from the DOM.
+    * An array of callbacks that will be fired every time the activePointer receives a move event from the DOM.
+    * To add a callback to this array please use `Input.addMoveCallback`.
+    * @property {array} moveCallbacks
+    * @protected
     */
     this.moveCallbacks = [];
-
-    /**
-    * @property {function} moveCallback - An optional callback that will be fired every time the activePointer receives a move event from the DOM. Set to null to disable.
-    */
-    this.moveCallback = null;
-
-    /**
-    * @property {object} moveCallbackContext - The context in which the moveCallback will be sent. Defaults to Phaser.Input but can be set to any valid JS object.
-    */
-    this.moveCallbackContext = this;
 
     /**
     * @property {number} pollRate - How often should the input pointers be checked for updates? A value of 0 means every single frame (60fps); a value of 1 means every other frame (30fps) and so on.
@@ -95,12 +88,6 @@ Phaser.Input = function (game) {
     * @default -1 (Limited by total pointers.)
     */
     this.maxPointers = -1;
-
-    /**
-    * @property {number} currentPointers - The current number of active Pointers.
-    * @deprecated This is only updated when `maxPointers >= 0` and will generally be innacurate. Use `totalActivePointers` instead.
-    */
-    this.currentPointers = 0;
 
     /**
     * @property {number} tapRate - The number of milliseconds that the Pointer has to be pressed down and then released to be considered a tap or click.
@@ -216,18 +203,27 @@ Phaser.Input = function (game) {
 
     /**
     * The most recently active Pointer object.
+    * 
     * When you've limited max pointers to 1 this will accurately be either the first finger touched or mouse.
+    * 
     * @property {Phaser.Pointer} activePointer
     */
     this.activePointer = null;
 
     /**
-    * @property {Pointer} mousePointer - The mouse has its own unique Phaser.Pointer object which you can use if making a desktop specific game.
+    * The mouse has its own unique Phaser.Pointer object which you can use if making a desktop specific game.
+    * 
+    * @property {Pointer} mousePointer
     */
     this.mousePointer = null;
 
     /**
-    * @property {Phaser.Mouse} mouse - The Mouse Input manager.
+    * The Mouse Input manager.
+    * 
+    * You should not usually access this manager directly, but instead use Input.mousePointer or Input.activePointer 
+    * which normalizes all the input values for you, regardless of browser.
+    * 
+    * @property {Phaser.Mouse} mouse
     */
     this.mouse = null;
 
@@ -237,12 +233,22 @@ Phaser.Input = function (game) {
     this.keyboard = null;
 
     /**
-    * @property {Phaser.Touch} touch - the Touch Input manager.
+    * The Touch Input manager.
+    * 
+    * You should not usually access this manager directly, but instead use Input.activePointer 
+    * which normalizes all the input values for you, regardless of browser.
+    * 
+    * @property {Phaser.Touch} touch
     */
     this.touch = null;
 
     /**
-    * @property {Phaser.MSPointer} mspointer - The MSPointer Input manager.
+    * The MSPointer Input manager.
+    * 
+    * You should not usually access this manager directly, but instead use Input.activePointer 
+    * which normalizes all the input values for you, regardless of browser.
+    * 
+    * @property {Phaser.MSPointer} mspointer
     */
     this.mspointer = null;
 
@@ -387,7 +393,6 @@ Phaser.Input.prototype = {
         this.circle = new Phaser.Circle(0, 0, 44);
 
         this.activePointer = this.mousePointer;
-        this.currentPointers = 0;
 
         this.hitCanvas = document.createElement('canvas');
         this.hitCanvas.width = 1;
@@ -445,33 +450,40 @@ Phaser.Input.prototype = {
     * Adds a callback that is fired every time the activePointer receives a DOM move event such as a mousemove or touchmove.
     *
     * The callback will be sent 4 parameters: The Pointer that moved, the x position of the pointer, the y position and the down state.
-
+    * 
     * It will be called every time the activePointer moves, which in a multi-touch game can be a lot of times, so this is best
     * to only use if you've limited input to a single pointer (i.e. mouse or touch).
+    * 
     * The callback is added to the Phaser.Input.moveCallbacks array and should be removed with Phaser.Input.deleteMoveCallback.
     * 
     * @method Phaser.Input#addMoveCallback
     * @param {function} callback - The callback that will be called each time the activePointer receives a DOM move event.
     * @param {object} context - The context in which the callback will be called.
-    * @return {number} The index of the callback entry. Use this index when calling Input.deleteMoveCallback.
     */
     addMoveCallback: function (callback, context) {
 
-        return this.moveCallbacks.push({ callback: callback, context: context }) - 1;
+        this.moveCallbacks.push({ callback: callback, context: context });
 
     },
 
     /**
-    * Removes the callback at the defined index from the Phaser.Input.moveCallbacks array
+    * Removes the callback from the Phaser.Input.moveCallbacks array.
     * 
     * @method Phaser.Input#deleteMoveCallback
-    * @param {number} index - The index of the callback to remove.
+    * @param {function} callback - The callback to be removed.
+    * @param {object} context - The context in which the callback exists.
     */
-    deleteMoveCallback: function (index) {
+    deleteMoveCallback: function (callback, context) {
 
-        if (this.moveCallbacks[index])
+        var i = this.moveCallbacks.length;
+
+        while (i--)
         {
-            this.moveCallbacks.splice(index, 1);
+            if (this.moveCallbacks[i].callback === callback && this.moveCallbacks[i].context === context)
+            {
+                this.moveCallbacks.splice(i, 1);
+                return;
+            }
         }
 
     },
@@ -488,7 +500,7 @@ Phaser.Input.prototype = {
 
         if (this.pointers.length >= Phaser.Input.MAX_POINTERS)
         {
-            console.warn("Phaser.Input.addPointer: only " + Phaser.Input.MAX_POINTERS + " pointer allowed");
+            console.warn("Phaser.Input.addPointer: Maximum limit of " + Phaser.Input.MAX_POINTERS + " pointers reached.");
             return null;
         }
 
@@ -577,8 +589,6 @@ Phaser.Input.prototype = {
         {
             this.pointers[i].reset();
         }
-
-        this.currentPointers = 0;
 
         if (this.game.canvas.style.cursor !== 'none')
         {
@@ -749,9 +759,6 @@ Phaser.Input.prototype = {
             }
         }
 
-        // For backwards compatibility with side-effect in totalActivePointers.
-        this.currentPointers = (limit - count);
-
         return (limit - count);
 
     },
@@ -760,7 +767,7 @@ Phaser.Input.prototype = {
     * Get the first Pointer with the given active state.
     *
     * @method Phaser.Input#getPointer
-    * @param {boolean} [isActive=false] - The state the Pointer should be in - active or innactive?
+    * @param {boolean} [isActive=false] - The state the Pointer should be in - active or inactive?
     * @return {Phaser.Pointer} A Pointer object or null if no Pointer object matches the requested state.
     */
     getPointer: function (isActive) {
@@ -1068,25 +1075,6 @@ Object.defineProperty(Phaser.Input.prototype, "worldY", {
 });
 
 /**
-* _All_ input sources (eg. Mouse, Keyboard, Touch) are ignored when Input is disabled.
-* To disable just one type of input; for example, the Mouse, use `input.mouse.enabled = false`.
-* @property {boolean} disabled
-* @memberof Phaser.Input
-* @default false
-* @deprecated Use {@link Phaser.Input#enabled} instead
-*/
-Object.defineProperty(Phaser.Input.prototype, "disabled", {
-
-    get: function () {
-        return !this.enabled;
-    },
-    set: function (value) {
-        this.enabled = !value;
-    }
-
-});
-
-/**
 * @author       Richard Davey <rich@photonstorm.com>
 * @copyright    2015 Photon Storm Ltd.
 * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
@@ -1095,8 +1083,12 @@ Object.defineProperty(Phaser.Input.prototype, "disabled", {
 /**
 * The Mouse class is responsible for handling all aspects of mouse interaction with the browser.
 *
-* It captures and processes mouse events that happen on the game canvas object. It also adds a single `mouseup` listener to `window` which
-* is used to capture the mouse being released when not over the game.
+* It captures and processes mouse events that happen on the game canvas object.
+* It also adds a single `mouseup` listener to `window` which is used to capture the mouse being released 
+* when not over the game.
+*
+* You should not normally access this class directly, but instead use a Phaser.Pointer object 
+* which normalises all game input for you, including accurate button handling.
 *
 * @class Phaser.Mouse
 * @constructor
@@ -1118,12 +1110,6 @@ Phaser.Mouse = function (game) {
     * @property {function} mouseDownCallback - A callback that can be fired when the mouse is pressed down.
     */
     this.mouseDownCallback = null;
-
-    /**
-    * @property {function} mouseMoveCallback - A callback that can be fired when the mouse is moved.
-    * @deprecated Will be removed soon. Please use `Input.addMoveCallback` instead.
-    */
-    this.mouseMoveCallback = null;
 
     /**
     * @property {function} mouseUpCallback - A callback that can be fired when the mouse is released from a pressed down state.
@@ -1151,7 +1137,9 @@ Phaser.Mouse = function (game) {
     this.capture = false;
 
     /**
-    * @property {number} button- The type of click, either: Phaser.Mouse.NO_BUTTON, Phaser.Mouse.LEFT_BUTTON, Phaser.Mouse.MIDDLE_BUTTON or Phaser.Mouse.RIGHT_BUTTON.
+    * This property was removed in Phaser 2.4 and should no longer be used.
+    * Instead please see the Pointer button properties such as `Pointer.leftButton`, `Pointer.rightButton` and so on.
+    * @property {number} button
     * @default
     */
     this.button = -1;
@@ -1238,30 +1226,6 @@ Phaser.Mouse = function (game) {
     this._wheelEvent = null;
 
 };
-
-/**
-* @constant
-* @type {number}
-*/
-Phaser.Mouse.NO_BUTTON = -1;
-
-/**
-* @constant
-* @type {number}
-*/
-Phaser.Mouse.LEFT_BUTTON = 0;
-
-/**
-* @constant
-* @type {number}
-*/
-Phaser.Mouse.MIDDLE_BUTTON = 1;
-
-/**
-* @constant
-* @type {number}
-*/
-Phaser.Mouse.RIGHT_BUTTON = 2;
 
 /**
  * @constant
@@ -1368,8 +1332,6 @@ Phaser.Mouse.prototype = {
             event.preventDefault();
         }
 
-        this.button = event.button;
-
         if (this.mouseDownCallback)
         {
             this.mouseDownCallback.call(this.callbackContext, event);
@@ -1430,8 +1392,6 @@ Phaser.Mouse.prototype = {
             event.preventDefault();
         }
 
-        this.button = Phaser.Mouse.NO_BUTTON;
-
         if (this.mouseUpCallback)
         {
             this.mouseUpCallback.call(this.callbackContext, event);
@@ -1458,8 +1418,6 @@ Phaser.Mouse.prototype = {
 
         if (!this.game.input.mousePointer.withinGame)
         {
-            this.button = Phaser.Mouse.NO_BUTTON;
-
             if (this.mouseUpCallback)
             {
                 this.mouseUpCallback.call(this.callbackContext, event);
@@ -1666,24 +1624,6 @@ Phaser.Mouse.prototype = {
 
 Phaser.Mouse.prototype.constructor = Phaser.Mouse;
 
-/**
-* If disabled all Mouse input will be ignored.
-* @property {boolean} disabled
-* @memberof Phaser.Mouse
-* @default false
-* @deprecated Use {@link Phaser.Mouse#enabled} instead
-*/
-Object.defineProperty(Phaser.Mouse.prototype, "disabled", {
-
-    get: function () {
-        return !this.enabled;
-    },
-    set: function (value) {
-        this.enabled = !value;
-    }
-
-});
-
 /* jshint latedef:nofunc */
 /**
 * A purely internal event support class to proxy 'wheelscroll' and 'DOMMouseWheel'
@@ -1779,6 +1719,9 @@ Object.defineProperties(WheelEventProxy.prototype, {
 * It will work only in Internet Explorer 10 and Windows Store or Windows Phone 8 apps using JavaScript.
 * http://msdn.microsoft.com/en-us/library/ie/hh673557(v=vs.85).aspx
 *
+* You should not normally access this class directly, but instead use a Phaser.Pointer object which 
+* normalises all game input for you including accurate button handling.
+*
 * @class Phaser.MSPointer
 * @constructor
 * @param {Phaser.Game} game - A reference to the currently running game.
@@ -1816,8 +1759,9 @@ Phaser.MSPointer = function (game) {
     this.capture = true;
 
     /**
-    * @property {number} button- The type of click, either: Phaser.Mouse.NO_BUTTON, Phaser.Mouse.LEFT_BUTTON, Phaser.Mouse.MIDDLE_BUTTON or Phaser.Mouse.RIGHT_BUTTON.
-    * @default
+    * This property was removed in Phaser 2.4 and should no longer be used.
+    * Instead please see the Pointer button properties such as `Pointer.leftButton`, `Pointer.rightButton` and so on.
+    * @property {number} button
     */
     this.button = -1;
 
@@ -1916,8 +1860,6 @@ Phaser.MSPointer.prototype = {
             event.preventDefault();
         }
 
-        this.button = event.button;
-
         if (this.pointerDownCallback)
         {
             this.pointerDownCallback.call(this.callbackContext, event);
@@ -1978,8 +1920,6 @@ Phaser.MSPointer.prototype = {
             event.preventDefault();
         }
 
-        this.button = Phaser.Mouse.NO_BUTTON;
-
         if (this.pointerUpCallback)
         {
             this.pointerUpCallback.call(this.callbackContext, event);
@@ -2015,24 +1955,6 @@ Phaser.MSPointer.prototype = {
 };
 
 Phaser.MSPointer.prototype.constructor = Phaser.MSPointer;
-
-/**
-* If disabled all MSPointer input will be ignored.
-* @property {boolean} disabled
-* @memberof Phaser.MSPointer
-* @default false
-* @deprecated Use {@link Phaser.MSPointer#enabled} instead
-*/
-Object.defineProperty(Phaser.MSPointer.prototype, "disabled", {
-
-    get: function () {
-        return !this.enabled;
-    },
-    set: function (value) {
-        this.enabled = !value;
-    }
-
-});
 
 /**
 * @author       Richard Davey <rich@photonstorm.com>
@@ -2091,10 +2013,57 @@ Phaser.Pointer = function (game, id) {
     this.target = null;
 
     /**
-    * @property {any} button - The button property of the Pointer as set by the DOM event when this Pointer is started.
+    * The button property of the most recent DOM event when this Pointer is started.
+    * You should not rely on this value for accurate button detection, instead use the Pointer properties
+    * `leftButton`, `rightButton`, `middleButton` and so on.
+    * @property {any} button
     * @default
     */
     this.button = null;
+
+    /**
+    * True if the left mouse button is being held down, or in PointerEvent based devices it represents a Touch contact or Pen contact.
+    * @property {boolean} leftButton
+    * @default
+    */
+    this.leftButton = false;
+
+    /**
+    * True if the middle mouse button is being held down.
+    * @property {boolean} middleButton
+    * @default
+    */
+    this.middleButton = false;
+
+    /**
+    * True if the right mouse button is being held down, or in PointerEvent based devices it represents a Pen contact with a barrel button.
+    * @property {boolean} rightButton
+    * @default
+    */
+    this.rightButton = false;
+
+    /**
+    * True if the X1 (back) mouse button is being held down. On Linux (GTK) this is unsupported.
+    * On Windows if advanced pointer software (such as IntelliPoint) is installed this doesn't register.
+    * @property {boolean} backButton
+    * @default
+    */
+    this.backButton = false;
+
+    /**
+    * True if the X2 (forward) mouse button is being held down. On Linux (GTK) this is unsupported.
+    * On Windows if advanced pointer software (such as IntelliPoint) is installed this doesn't register.
+    * @property {boolean} forwardButton
+    * @default
+    */
+    this.forwardButton = false;
+
+    /**
+    * True if the Eraser pen button is being held down. Only works on PointerEvent supported devices.
+    * @property {boolean} eraserButton
+    * @default
+    */
+    this.eraserButton = false;
 
     /**
     * @property {boolean} _holdSent - Local private variable to store the status of dispatching a hold event.
@@ -2199,13 +2168,13 @@ Phaser.Pointer = function (game, id) {
     this.isMouse = false;
 
     /**
-    * @property {boolean} isDown - If the Pointer is touching the touchscreen, or the mouse button is held down, isDown is set to true.
+    * @property {boolean} isDown - If the Pointer is touching the touchscreen, or *any* mouse button is held down, isDown is set to true.
     * @default
     */
     this.isDown = false;
 
     /**
-    * @property {boolean} isUp - If the Pointer is not touching the touchscreen, or the mouse button is up, isUp is set to true.
+    * @property {boolean} isUp - If the Pointer is not touching the touchscreen, or *all* mouse buttons are up, isUp is set to true.
     * @default
     */
     this.isUp = true;
@@ -2302,7 +2271,122 @@ Phaser.Pointer = function (game, id) {
 
 };
 
+/**
+* No buttons at all.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.NO_BUTTON = 0;
+
+/**
+* The Left Mouse button, or in PointerEvent devices a Touch contact or Pen contact.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.LEFT_BUTTON = 1;
+
+/**
+* The Right Mouse button, or in PointerEvent devices a Pen contact with a barrel button.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.RIGHT_BUTTON = 2;
+
+/**
+* The Middle Mouse button.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.MIDDLE_BUTTON = 4;
+
+/**
+* The X1 button. This is typically the mouse Back button, but is often reconfigured.
+* On Linux (GTK) this is unsupported. On Windows if advanced pointer software (such as IntelliPoint) is installed this doesn't register.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.BACK_BUTTON = 8;
+
+/**
+* The X2 button. This is typically the mouse Forward button, but is often reconfigured.
+* On Linux (GTK) this is unsupported. On Windows if advanced pointer software (such as IntelliPoint) is installed this doesn't register.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.FORWARD_BUTTON = 16;
+
+/**
+* The Eraser pen button on PointerEvent supported devices only.
+* @constant
+* @type {number}
+*/
+Phaser.Pointer.ERASER_BUTTON = 32;
+
 Phaser.Pointer.prototype = {
+
+    /**
+    * Resets the states of all the button booleans.
+    * 
+    * @method Phaser.Pointer#resetButtons
+    * @protected
+    */
+    resetButtons: function () {
+
+        this.leftButton = false;
+        this.middleButton = false;
+        this.rightButton = false;
+        this.backButton = false;
+        this.forwardButton = false;
+        this.eraserButton = false;
+
+        this.isUp = true;
+        this.isDown = false;
+
+    },
+
+    /**
+    * Called when the event.buttons property changes from zero.
+    * Contains a button bitmask.
+    * 
+    * @method Phaser.Pointer#updateButtons
+    * @protected
+    * @param {MouseEvent} event - The DOM event.
+    */
+    updateButtons: function (event) {
+
+        this.button = event.button;
+
+        var buttons = event.buttons;
+
+        if (typeof buttons === 'undefined')
+        {
+            return;
+        }
+
+        this.leftButton = (Phaser.Pointer.LEFT_BUTTON & buttons) ? true : false;
+        this.rightButton = (Phaser.Pointer.RIGHT_BUTTON & buttons) ? true : false;
+        this.middleButton = (Phaser.Pointer.MIDDLE_BUTTON & buttons) ? true : false;
+        this.backButton = (Phaser.Pointer.BACK_BUTTON & buttons) ? true : false;
+        this.forwardButton = (Phaser.Pointer.FORWARD_BUTTON & buttons) ? true : false;
+        this.eraserButton = (Phaser.Pointer.ERASER_BUTTON & buttons) ? true : false;
+
+        //  On OS X (and other devices with trackpads) you have to press CTRL + the pad
+        //  to initiate a right-click event, so we'll check for that here
+        if (event.ctrlKey && this.leftButton)
+        {
+            this.rightButton = true;
+        }
+
+        this.isUp = true;
+        this.isDown = false;
+
+        if (this.leftButton || this.rightButton || this.middleButton || this.backButton || this.forwardButton || this.eraserButton)
+        {
+            this.isUp = false;
+            this.isDown = true;
+        }
+
+    },
 
     /**
     * Called when the Pointer is pressed onto the touchscreen.
@@ -2319,16 +2403,11 @@ Phaser.Pointer.prototype = {
         this.identifier = event.identifier;
         this.target = event.target;
 
-        if (typeof event.button !== 'undefined')
-        {
-            this.button = event.button;
-        }
+        this.updateButtons(event);
 
         this._history = [];
         this.active = true;
         this.withinGame = true;
-        this.isDown = true;
-        this.isUp = false;
         this.dirty = false;
         this._clickTrampolines = null;
         this._trampolineTargetObject = null;
@@ -2344,7 +2423,9 @@ Phaser.Pointer.prototype = {
         // x and y are the old values here?
         this.positionDown.setTo(this.x, this.y);
 
-        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
+        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH ||
+            this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE ||
+            (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.totalActivePointers === 0))
         {
             this.game.input.x = this.x;
             this.game.input.y = this.y;
@@ -2355,11 +2436,6 @@ Phaser.Pointer.prototype = {
 
         this._stateReset = false;
         this.totalTouches++;
-
-        if (!this.isMouse)
-        {
-            this.game.input.currentPointers++;
-        }
 
         if (this.targetObject !== null)
         {
@@ -2391,7 +2467,9 @@ Phaser.Pointer.prototype = {
 
             if (this._holdSent === false && this.duration >= this.game.input.holdRate)
             {
-                if (this.game.input.multiInputOverride == Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride == Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride == Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
+                if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH ||
+                    this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE ||
+                    (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.totalActivePointers === 0))
                 {
                     this.game.input.onHold.dispatch(this);
                 }
@@ -2434,9 +2512,9 @@ Phaser.Pointer.prototype = {
 
         if (typeof fromClick === 'undefined') { fromClick = false; }
 
-        if (typeof event.button !== 'undefined')
+        if (fromClick)
         {
-            this.button = event.button;
+            this.updateButtons(event);
         }
 
         this.clientX = event.clientX;
@@ -2464,7 +2542,9 @@ Phaser.Pointer.prototype = {
         this.circle.x = this.x;
         this.circle.y = this.y;
 
-        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
+        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH ||
+            this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE ||
+            (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.totalActivePointers === 0))
         {
             this.game.input.activePointer = this;
             this.game.input.x = this.x;
@@ -2643,9 +2723,13 @@ Phaser.Pointer.prototype = {
             return;
         }
 
+        this.updateButtons(event);
+
         this.timeUp = this.game.time.time;
 
-        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH || this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE || (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.currentPointers === 0))
+        if (this.game.input.multiInputOverride === Phaser.Input.MOUSE_OVERRIDES_TOUCH ||
+            this.game.input.multiInputOverride === Phaser.Input.MOUSE_TOUCH_COMBINE ||
+            (this.game.input.multiInputOverride === Phaser.Input.TOUCH_OVERRIDES_MOUSE && this.game.input.totalActivePointers === 0))
         {
             this.game.input.onUp.dispatch(this, event);
 
@@ -2675,8 +2759,6 @@ Phaser.Pointer.prototype = {
         }
 
         this.withinGame = false;
-        this.isDown = false;
-        this.isUp = true;
         this.pointerId = null;
         this.identifier = null;
         
@@ -2693,6 +2775,7 @@ Phaser.Pointer.prototype = {
         {
             this._trampolineTargetObject = this.targetObject;
         }
+
         this.targetObject = null;
 
         return this;
@@ -2727,7 +2810,7 @@ Phaser.Pointer.prototype = {
 
         duration = duration || this.game.input.justReleasedRate;
 
-        return (this.isUp === true && (this.timeUp + duration) > this.game.time.time);
+        return (this.isUp && (this.timeUp + duration) > this.game.time.time);
 
     },
 
@@ -2736,7 +2819,7 @@ Phaser.Pointer.prototype = {
     *
     * A click trampoline is a callback that is run on the DOM 'click' event; this is primarily
     * needed with certain browsers (ie. IE11) which restrict some actions like requestFullscreen
-    * to the DOM 'click' event and reject it for 'pointer*' and 'mouse*' events.
+    * to the DOM 'click' event and rejects it for 'pointer*' and 'mouse*' events.
     *
     * This is used internally by the ScaleManager; click trampoline usage is uncommon.
     * Click trampolines can only be added to pointers that are currently down.
@@ -2777,13 +2860,14 @@ Phaser.Pointer.prototype = {
     },
 
     /**
-    * Fire all click trampolines for which the pointers are still refering to the registered object.
+    * Fire all click trampolines for which the pointers are still referring to the registered object.
     * @method Phaser.Pointer#processClickTrampolines
     * @private
     */
     processClickTrampolines: function () {
 
         var trampolines = this._clickTrampolines;
+
         if (!trampolines)
         {
             return;
@@ -2818,12 +2902,12 @@ Phaser.Pointer.prototype = {
         this.pointerId = null;
         this.identifier = null;
         this.dirty = false;
-        this.isDown = false;
-        this.isUp = true;
         this.totalTouches = 0;
         this._holdSent = false;
         this._history.length = 0;
         this._stateReset = true;
+
+        this.resetButtons();
 
         if (this.targetObject)
         {
@@ -2850,9 +2934,11 @@ Phaser.Pointer.prototype = {
 Phaser.Pointer.prototype.constructor = Phaser.Pointer;
 
 /**
-* How long the Pointer has been depressed on the touchscreen. If not currently down it returns -1.
+* How long the Pointer has been depressed on the touchscreen or *any* of the mouse buttons have been held down.
+* If not currently down it returns -1.
+* 
 * @name Phaser.Pointer#duration
-* @property {number} duration - How long the Pointer has been depressed on the touchscreen. If not currently down it returns -1.
+* @property {number} duration
 * @readonly
 */
 Object.defineProperty(Phaser.Pointer.prototype, "duration", {
@@ -2911,6 +2997,8 @@ Object.defineProperty(Phaser.Pointer.prototype, "worldY", {
 /**
 * Phaser.Touch handles touch events with your game. Note: Android 2.x only supports 1 touch event at once, no multi-touch.
 *
+* You should not normally access this class directly, but instead use a Phaser.Pointer object which normalises all game input for you.
+*
 * @class Phaser.Touch
 * @constructor
 * @param {Phaser.Game} game - A reference to the currently running game.
@@ -2928,6 +3016,15 @@ Phaser.Touch = function (game) {
     * @default
     */
     this.enabled = true;
+
+    /**
+    * An array of callbacks that will be fired every time a native touch start event is received from the browser.
+    * This is used internally to handle audio and video unlocking on mobile devices.
+    * To add a callback to this array please use `Touch.addTouchLockCallback`.
+    * @property {array} touchLockCallbacks
+    * @protected
+    */
+    this.touchLockCallbacks = [];
 
     /**
     * @property {object} callbackContext - The context under which callbacks are called.
@@ -3091,22 +3188,76 @@ Phaser.Touch.prototype = {
     },
 
     /**
+    * Adds a callback that is fired when a browser touchstart event is received.
+    *
+    * This is used internally to handle audio and video unlocking on mobile devices.
+    *
+    * If the callback returns 'true' then the callback is automatically deleted once invoked.
+    *
+    * The callback is added to the Phaser.Touch.touchLockCallbacks array and should be removed with Phaser.Touch.removeTouchLockCallback.
+    * 
+    * @method Phaser.Touch#addTouchLockCallback
+    * @param {function} callback - The callback that will be called when a touchstart event is received.
+    * @param {object} context - The context in which the callback will be called.
+    */
+    addTouchLockCallback: function (callback, context) {
+
+        this.touchLockCallbacks.push({ callback: callback, context: context });
+
+    },
+
+    /**
+    * Removes the callback at the defined index from the Phaser.Touch.touchLockCallbacks array
+    * 
+    * @method Phaser.Touch#removeTouchLockCallback
+    * @param {function} callback - The callback to be removed.
+    * @param {object} context - The context in which the callback exists.
+    * @return {boolean} True if the callback was deleted, otherwise false.
+    */
+    removeTouchLockCallback: function (callback, context) {
+
+        var i = this.touchLockCallbacks.length;
+
+        while (i--)
+        {
+            if (this.touchLockCallbacks[i].callback === callback && this.touchLockCallbacks[i].context === context)
+            {
+                this.touchLockCallbacks.splice(i, 1);
+                return true;
+            }
+        }
+
+        return false;
+
+    },
+
+    /**
     * The internal method that handles the touchstart event from the browser.
     * @method Phaser.Touch#onTouchStart
     * @param {TouchEvent} event - The native event from the browser. This gets stored in Touch.event.
     */
     onTouchStart: function (event) {
 
-        this.event = event;
+        var i = this.touchLockCallbacks.length;
 
-        if (this.touchStartCallback)
+        while (i--)
         {
-            this.touchStartCallback.call(this.callbackContext, event);
+            if (this.touchLockCallbacks[i].callback.call(this.touchLockCallbacks[i].context, this, event))
+            {
+                this.touchLockCallbacks.splice(i, 1);
+            }
         }
+
+        this.event = event;
 
         if (!this.game.input.enabled || !this.enabled)
         {
             return;
+        }
+
+        if (this.touchStartCallback)
+        {
+            this.touchStartCallback.call(this.callbackContext, event);
         }
 
         if (this.preventDefault)
@@ -3283,24 +3434,6 @@ Phaser.Touch.prototype = {
 };
 
 Phaser.Touch.prototype.constructor = Phaser.Touch;
-
-/**
-* If disabled all Touch events will be ignored.
-* @property {boolean} disabled
-* @memberof Phaser.Touch
-* @default false
-* @deprecated Use {@link Phaser.Touch#enabled} instead
-*/
-Object.defineProperty(Phaser.Touch.prototype, "disabled", {
-
-    get: function () {
-        return !this.enabled;
-    },
-    set: function (value) {
-        this.enabled = !value;
-    }
-
-});
 
 /**
 * @author       Richard Davey <rich@photonstorm.com>
@@ -3497,6 +3630,11 @@ Phaser.InputHandler = function (sprite) {
     * @property {Phaser.Point} dragStartPoint - The Point from which the most recent drag started from. Useful if you need to return an object to its starting position.
     */
     this.dragStartPoint = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} snapPoint - If the sprite is set to snap while dragging this holds the point of the most recent 'snap' event.
+    */
+    this.snapPoint = new Phaser.Point();
 
     /**
     * @property {Phaser.Point} _dragPoint - Internal cache var.
@@ -4225,7 +4363,7 @@ Phaser.InputHandler.prototype = {
             return;
         }
 
-        if (this._pointerData[pointer.id].isDown === false && this._pointerData[pointer.id].isOver === true)
+        if (!this._pointerData[pointer.id].isDown && this._pointerData[pointer.id].isOver)
         {
             if (this.pixelPerfectClick && !this.checkPixel(null, null, pointer))
             {
@@ -4363,6 +4501,7 @@ Phaser.InputHandler.prototype = {
             {
                 this.sprite.cameraOffset.x = Math.round((this.sprite.cameraOffset.x - (this.snapOffsetX % this.snapX)) / this.snapX) * this.snapX + (this.snapOffsetX % this.snapX);
                 this.sprite.cameraOffset.y = Math.round((this.sprite.cameraOffset.y - (this.snapOffsetY % this.snapY)) / this.snapY) * this.snapY + (this.snapOffsetY % this.snapY);
+                this.snapPoint.set(this.sprite.cameraOffset.x, this.sprite.cameraOffset.y);
             }
         }
         else
@@ -4391,8 +4530,11 @@ Phaser.InputHandler.prototype = {
             {
                 this.sprite.x = Math.round((this.sprite.x - (this.snapOffsetX % this.snapX)) / this.snapX) * this.snapX + (this.snapOffsetX % this.snapX);
                 this.sprite.y = Math.round((this.sprite.y - (this.snapOffsetY % this.snapY)) / this.snapY) * this.snapY + (this.snapOffsetY % this.snapY);
+                this.snapPoint.set(this.sprite.x, this.sprite.y);
             }
         }
+
+        this.sprite.events.onDragUpdate.dispatch(this.sprite, pointer, px, py, this.snapPoint);
 
         return true;
 
@@ -4501,7 +4643,15 @@ Phaser.InputHandler.prototype = {
     },
 
     /**
-    * Make this Sprite draggable by the mouse. You can also optionally set mouseStartDragCallback and mouseStopDragCallback
+    * Allow this Sprite to be dragged by any valid pointer.
+    *
+    * When the drag begins the Sprite.events.onDragStart event will be dispatched.
+    * 
+    * When the drag completes by way of the user letting go of the pointer that was dragging the sprite, the Sprite.events.onDragStop event is dispatched.
+    *
+    * For the duration of the drag the Sprite.events.onDragUpdate event is dispatched. This event is only dispatched when the pointer actually
+    * changes position and moves. The event sends 5 parameters: `sprite`, `pointer`, `dragX`, `dragY` and `snapPoint`.
+    * 
     * @method Phaser.InputHandler#enableDrag
     * @param {boolean} [lockCenter=false] - If false the Sprite will drag from where you click it minus the dragOffset. If true it will center itself to the tip of the mouse pointer.
     * @param {boolean} [bringToTop=false] - If true the Sprite will be bought to the top of the rendering list in its current Group.
@@ -4706,7 +4856,7 @@ Phaser.InputHandler.prototype = {
     * @param {boolean} [onDrag=true] - If true the sprite will snap to the grid while being dragged.
     * @param {boolean} [onRelease=false] - If true the sprite will snap to the grid when released.
     * @param {number} [snapOffsetX=0] - Used to offset the top-left starting point of the snap grid.
-    * @param {number} [snapOffsetX=0] - Used to offset the top-left starting point of the snap grid.
+    * @param {number} [snapOffsetY=0] - Used to offset the top-left starting point of the snap grid.
     */
     enableSnap: function (snapX, snapY, onDrag, onRelease, snapOffsetX, snapOffsetY) {
 

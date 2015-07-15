@@ -70,6 +70,31 @@ Phaser.Circle.prototype = {
     },
 
     /**
+    * Returns a uniformly distributed random point from anywhere within this Circle.
+    * 
+    * @method Phaser.Circle#random
+    * @param {Phaser.Point|object} [out] - A Phaser.Point, or any object with public x/y properties, that the values will be set in.
+    *     If no object is provided a new Phaser.Point object will be created. In high performance areas avoid this by re-using an existing object.
+    * @return {Phaser.Point} An object containing the random point in its `x` and `y` properties.
+    */
+    random: function (out) {
+
+        if (typeof out === 'undefined') { out = new Phaser.Point(); }
+
+        var t = 2 * Math.PI * Math.random();
+        var u = Math.random() + Math.random();
+        var r = (u > 1) ? 2 - u : u;
+        var x = r * Math.cos(t);
+        var y = r * Math.sin(t);
+
+        out.x = this.x + (x * this.radius);
+        out.y = this.y + (y * this.radius);
+
+        return out;
+
+    },
+
+    /**
     * Returns the framing rectangle of the circle as a Phaser.Rectangle object.
     * 
     * @method Phaser.Circle#getBounds
@@ -686,6 +711,7 @@ Phaser.Ellipse.prototype = {
 
     /**
     * Return true if the given x/y coordinates are within this Ellipse object.
+    * 
     * @method Phaser.Ellipse#contains
     * @param {number} x - The X value of the coordinate to test.
     * @param {number} y - The Y value of the coordinate to test.
@@ -694,6 +720,31 @@ Phaser.Ellipse.prototype = {
     contains: function (x, y) {
 
         return Phaser.Ellipse.contains(this, x, y);
+
+    },
+
+    /**
+    * Returns a uniformly distributed random point from anywhere within this Ellipse.
+    * 
+    * @method Phaser.Ellipse#random
+    * @param {Phaser.Point|object} [out] - A Phaser.Point, or any object with public x/y properties, that the values will be set in.
+    *     If no object is provided a new Phaser.Point object will be created. In high performance areas avoid this by re-using an existing object.
+    * @return {Phaser.Point} An object containing the random point in its `x` and `y` properties.
+    */
+    random: function (out) {
+
+        if (typeof out === 'undefined') { out = new Phaser.Point(); }
+
+        var p = Math.random() * Math.PI * 2;
+        var r = Math.random();
+
+        out.x = Math.sqrt(r) * Math.cos(p);
+        out.y = Math.sqrt(r) * Math.sin(p);
+
+        out.x = this.x + (out.x * this.width / 2.0);
+        out.y = this.y + (out.y * this.height / 2.0);
+
+        return out;
 
     },
 
@@ -953,6 +1004,30 @@ Phaser.Line.prototype = {
     },
 
     /**
+    * Rotates the line by the amount specified in `angle`.
+    * 
+    * Rotation takes place from the center of the line.
+    * 
+    * If you wish to rotate from either end see Line.start.rotate or Line.end.rotate.
+    * 
+    * @method Phaser.Line#rotate
+    * @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the line by.
+    * @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
+    * @return {Phaser.Line} This line object
+    */
+    rotate: function (angle, asDegrees) {
+
+        var x = this.start.x;
+        var y = this.start.y;
+
+        this.start.rotate(this.end.x, this.end.y, angle, asDegrees, this.length);
+        this.end.rotate(x, y, angle, asDegrees, this.length);
+
+        return this;
+
+    },
+
+    /**
     * Checks for intersection between this line and another Line.
     * If asSegment is true it will check for segment intersection. If asSegment is false it will check for line intersection.
     * Returns the intersection segment of AB and EF as a Point, or null if there is no intersection.
@@ -1013,6 +1088,27 @@ Phaser.Line.prototype = {
         var yMax = Math.max(this.start.y, this.end.y);
 
         return (this.pointOnLine(x, y) && (x >= xMin && x <= xMax) && (y >= yMin && y <= yMax));
+
+    },
+
+    /**
+    * Picks a random point from anywhere on the Line segment and returns it.
+    * 
+    * @method Phaser.Line#random
+    * @param {Phaser.Point|object} [out] - A Phaser.Point, or any object with public x/y properties, that the values will be set in.
+    *     If no object is provided a new Phaser.Point object will be created. In high performance areas avoid this by re-using an object.
+    * @return {Phaser.Point} An object containing the random point in its `x` and `y` properties.
+    */
+    random: function (out) {
+
+        if (typeof out === 'undefined') { out = new Phaser.Point(); }
+
+        var t = Math.random();
+
+        out.x = this.start.x + t * (this.end.x - this.start.x);
+        out.y = this.start.y + t * (this.end.y - this.start.y);
+
+        return out;
 
     },
 
@@ -1112,7 +1208,7 @@ Object.defineProperty(Phaser.Line.prototype, "length", {
 
 /**
 * @name Phaser.Line#angle
-* @property {number} angle - Gets the angle of the line.
+* @property {number} angle - Gets the angle of the line in radians.
 * @readonly
 */
 Object.defineProperty(Phaser.Line.prototype, "angle", {
@@ -1384,62 +1480,74 @@ Phaser.Line.reflect = function (a, b) {
 };
 
 /**
- * @author Mat Groves http://matgroves.com/ @Doormat23
- */
+* @author       Mat Groves http://matgroves.com/ @Doormat23
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2015 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
 
 /**
- * The Matrix class is now an object, which makes it a lot faster, 
- * here is a representation of it : 
- * | a | b | tx|
- * | c | d | ty|
- * | 0 | 0 | 1 |
- *
- * @class Matrix
- * @constructor
- */
-Phaser.Matrix = function()
-{
-    /**
-     * @property a
-     * @type Number
-     * @default 1
-     */
-    this.a = 1;
+* The Matrix is a 3x3 matrix mostly used for display transforms within the renderer.
+* 
+* It is represented like so:
+* 
+* | a | b | tx |
+* | c | d | ty |
+* | 0 | 0 | 1 |
+*
+* @class Phaser.Matrix
+* @constructor
+* @param {number} [a=1]
+* @param {number} [b=0]
+* @param {number} [c=0]
+* @param {number} [d=1]
+* @param {number} [tx=0]
+* @param {number} [ty=0]
+*/
+Phaser.Matrix = function (a, b, c, d, tx, ty) {
+
+    a = a || 1;
+    b = b || 0;
+    c = c || 0;
+    d = d || 1;
+    tx = tx || 0;
+    ty = ty || 0;
 
     /**
-     * @property b
-     * @type Number
-     * @default 0
-     */
-    this.b = 0;
+    * @property {number} a
+    * @default 1
+    */
+    this.a = a;
 
     /**
-     * @property c
-     * @type Number
-     * @default 0
-     */
-    this.c = 0;
+    * @property {number} b
+    * @default 0
+    */
+    this.b = b;
 
     /**
-     * @property d
-     * @type Number
-     * @default 1
-     */
-    this.d = 1;
+    * @property {number} c
+    * @default 0
+    */
+    this.c = c;
 
     /**
-     * @property tx
-     * @type Number
-     * @default 0
-     */
-    this.tx = 0;
+    * @property {number} d
+    * @default 1
+    */
+    this.d = d;
 
     /**
-     * @property ty
-     * @type Number
-     * @default 0
-     */
-    this.ty = 0;
+    * @property {number} tx
+    * @default 0
+    */
+    this.tx = tx;
+
+    /**
+    * @property {number} ty
+    * @default 0
+    */
+    this.ty = ty;
 
     /**
     * @property {number} type - The const type of this object.
@@ -1449,221 +1557,309 @@ Phaser.Matrix = function()
 
 };
 
-/**
- * Creates a Matrix object based on the given array. The Element to Matrix mapping order is as follows:
- *
- * a = array[0]
- * b = array[1]
- * c = array[3]
- * d = array[4]
- * tx = array[2]
- * ty = array[5]
- *
- * @method fromArray
- * @param array {Array} The array that the matrix will be populated from.
- */
-Phaser.Matrix.prototype.fromArray = function(array)
-{
-    this.a = array[0];
-    this.b = array[1];
-    this.c = array[3];
-    this.d = array[4];
-    this.tx = array[2];
-    this.ty = array[5];
-};
+Phaser.Matrix.prototype = {
 
-/**
- * Creates an array from the current Matrix object.
- *
- * @method toArray
- * @param transpose {Boolean} Whether we need to transpose the matrix or not
- * @return {Array} the newly created array which contains the matrix
- */
-Phaser.Matrix.prototype.toArray = function(transpose)
-{
-    if (!this.array)
-    {
-        this.array = new PIXI.Float32Array(9);
+    /**
+    * Sets the values of this Matrix to the values in the given array.
+    * 
+    * The Array elements should be set as follows:
+    *
+    * a = array[0]
+    * b = array[1]
+    * c = array[3]
+    * d = array[4]
+    * tx = array[2]
+    * ty = array[5]
+    *
+    * @method Phaser.Matrix#fromArray
+    * @param {Array} array - The array to copy from.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    fromArray: function (array) {
+
+        return this.setTo(array[0], array[1], array[3], array[4], array[2], array[5]);
+
+    },
+
+    /**
+    * Sets the values of this Matrix to the given values.
+    *
+    * @method Phaser.Matrix#setTo
+    * @param {number} a
+    * @param {number} b
+    * @param {number} c
+    * @param {number} d
+    * @param {number} tx
+    * @param {number} ty
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    setTo: function (a, b, c, d, tx, ty) {
+
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.tx = tx;
+        this.ty = ty;
+
+        return this;
+
+    },
+
+    /**
+     * Creates a new Matrix object based on the values of this Matrix.
+     * If you provide the output parameter the values of this Matrix will be copied over to it.
+     * If the output parameter is blank a new Matrix object will be created.
+     *
+     * @method Phaser.Matrix#clone
+     * @param {Phaser.Matrix} [output] - If provided the values of this Matrix will be copied to it, otherwise a new Matrix object is created.
+     * @return {Phaser.Matrix} A clone of this Matrix.
+     */
+    clone: function (output) {
+
+        if (typeof output === "undefined" || output === null)
+        {
+            output = new Phaser.Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
+        }
+        else
+        {
+            output.a = this.a;
+            output.b = this.b;
+            output.c = this.c;
+            output.d = this.d;
+            output.tx = this.tx;
+            output.ty = this.ty;
+        }
+
+        return output;
+
+    },
+
+    /**
+    * Copies the properties from this Matrix to the given Matrix.
+    *
+    * @method Phaser.Matrix#copyTo
+    * @param {Phaser.Matrix} matrix - The Matrix to copy from.
+    * @return {Phaser.Matrix} The destination Matrix object.
+    */
+    copyTo: function (matrix) {
+
+        matrix.copyFrom(this);
+
+        return matrix;
+
+    },
+
+    /**
+    * Copies the properties from the given Matrix into this Matrix.
+    *
+    * @method Phaser.Matrix#copyFrom
+    * @param {Phaser.Matrix} matrix - The Matrix to copy from.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    copyFrom: function (matrix) {
+
+        this.a = matrix.a;
+        this.b = matrix.b;
+        this.c = matrix.c;
+        this.d = matrix.d;
+        this.tx = matrix.tx;
+        this.ty = matrix.ty;
+
+        return this;
+
+    },
+
+    /**
+    * Creates a Float32 Array with values populated from this Matrix object.
+    *
+    * @method Phaser.Matrix#toArray
+    * @param {boolean} [transpose=false] - Whether the values in the array are transposed or not.
+    * @param {PIXI.Float32Array} [array] - If provided the values will be set into this array, otherwise a new Float32Array is created.
+    * @return {PIXI.Float32Array} The newly created array which contains the matrix.
+    */
+    toArray: function (transpose, array) {
+
+        if (typeof array === 'undefined') { array = new PIXI.Float32Array(9); }
+
+        if (transpose)
+        {
+            array[0] = this.a;
+            array[1] = this.b;
+            array[2] = 0;
+            array[3] = this.c;
+            array[4] = this.d;
+            array[5] = 0;
+            array[6] = this.tx;
+            array[7] = this.ty;
+            array[8] = 1;
+        }
+        else
+        {
+            array[0] = this.a;
+            array[1] = this.c;
+            array[2] = this.tx;
+            array[3] = this.b;
+            array[4] = this.d;
+            array[5] = this.ty;
+            array[6] = 0;
+            array[7] = 0;
+            array[8] = 1;
+        }
+
+        return array;
+
+    },
+
+    /**
+    * Get a new position with the current transformation applied.
+    * 
+    * Can be used to go from a childs coordinate space to the world coordinate space (e.g. rendering)
+    *
+    * @method Phaser.Matrix#apply
+    * @param {Phaser.Point} pos - The origin Point.
+    * @param {Phaser.Point} [newPos] - The point that the new position is assigned to. This can be same as input point.
+    * @return {Phaser.Point} The new point, transformed through this matrix.
+    */
+    apply: function (pos, newPos) {
+
+        if (typeof newPos === 'undefined') { newPos = new Phaser.Point(); }
+
+        newPos.x = this.a * pos.x + this.c * pos.y + this.tx;
+        newPos.y = this.b * pos.x + this.d * pos.y + this.ty;
+
+        return newPos;
+
+    },
+
+    /**
+    * Get a new position with the inverse of the current transformation applied.
+    * 
+    * Can be used to go from the world coordinate space to a childs coordinate space. (e.g. input)
+    *
+    * @method Phaser.Matrix#applyInverse
+    * @param {Phaser.Point} pos - The origin Point.
+    * @param {Phaser.Point} [newPos] - The point that the new position is assigned to. This can be same as input point.
+    * @return {Phaser.Point} The new point, inverse transformed through this matrix.
+    */
+    applyInverse: function (pos, newPos) {
+
+        if (typeof newPos === 'undefined') { newPos = new Phaser.Point(); }
+
+        var id = 1 / (this.a * this.d + this.c * -this.b);
+        var x = pos.x;
+        var y = pos.y;
+
+        newPos.x = this.d * id * x + -this.c * id * y + (this.ty * this.c - this.tx * this.d) * id;
+        newPos.y = this.a * id * y + -this.b * id * x + (-this.ty * this.a + this.tx * this.b) * id;
+
+        return newPos;
+
+    },
+
+    /**
+    * Translates the matrix on the x and y.
+    * This is the same as Matrix.tx += x.
+    * 
+    * @method Phaser.Matrix#translate
+    * @param {number} x - The x value to translate on.
+    * @param {number} y - The y value to translate on.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    translate: function (x, y) {
+
+        this.tx += x;
+        this.ty += y;
+        
+        return this;
+
+    },
+
+    /**
+    * Applies a scale transformation to this matrix.
+    * 
+    * @method Phaser.Matrix#scale
+    * @param {number} x - The amount to scale horizontally.
+    * @param {number} y - The amount to scale vertically.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    scale: function (x, y) {
+
+        this.a *= x;
+        this.d *= y;
+        this.c *= x;
+        this.b *= y;
+        this.tx *= x;
+        this.ty *= y;
+
+        return this;
+
+    },
+
+    /**
+    * Applies a rotation transformation to this matrix.
+    * 
+    * @method Phaser.Matrix#rotate
+    * @param {number} angle - The angle to rotate by, given in radians.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    rotate: function (angle) {
+
+        var cos = Math.cos(angle);
+        var sin = Math.sin(angle);
+
+        var a1 = this.a;
+        var c1 = this.c;
+        var tx1 = this.tx;
+
+        this.a = a1 * cos-this.b * sin;
+        this.b = a1 * sin+this.b * cos;
+        this.c = c1 * cos-this.d * sin;
+        this.d = c1 * sin+this.d * cos;
+        this.tx = tx1 * cos - this.ty * sin;
+        this.ty = tx1 * sin + this.ty * cos;
+     
+        return this;
+
+    },
+
+    /**
+    * Appends the given Matrix to this Matrix.
+    * 
+    * @method Phaser.Matrix#append
+    * @param {Phaser.Matrix} matrix - The matrix to append to this one.
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    append: function (matrix) {
+
+        var a1 = this.a;
+        var b1 = this.b;
+        var c1 = this.c;
+        var d1 = this.d;
+
+        this.a  = matrix.a * a1 + matrix.b * c1;
+        this.b  = matrix.a * b1 + matrix.b * d1;
+        this.c  = matrix.c * a1 + matrix.d * c1;
+        this.d  = matrix.c * b1 + matrix.d * d1;
+
+        this.tx = matrix.tx * a1 + matrix.ty * c1 + this.tx;
+        this.ty = matrix.tx * b1 + matrix.ty * d1 + this.ty;
+        
+        return this;
+
+    },
+
+    /**
+    * Resets this Matrix to an identity (default) matrix.
+    * 
+    * @method identity
+    * @return {Phaser.Matrix} This Matrix object.
+    */
+    identity: function () {
+
+        return this.setTo(1, 0, 0, 1, 0, 0);
     }
 
-    var array = this.array;
-
-    if (transpose)
-    {
-        array[0] = this.a;
-        array[1] = this.b;
-        array[2] = 0;
-        array[3] = this.c;
-        array[4] = this.d;
-        array[5] = 0;
-        array[6] = this.tx;
-        array[7] = this.ty;
-        array[8] = 1;
-    }
-    else
-    {
-        array[0] = this.a;
-        array[1] = this.c;
-        array[2] = this.tx;
-        array[3] = this.b;
-        array[4] = this.d;
-        array[5] = this.ty;
-        array[6] = 0;
-        array[7] = 0;
-        array[8] = 1;
-    }
-
-    return array;
-};
-
-/**
- * Get a new position with the current transformation applied.
- * Can be used to go from a child's coordinate space to the world coordinate space. (e.g. rendering)
- *
- * @method apply
- * @param pos {Point} The origin
- * @param [newPos] {Point} The point that the new position is assigned to (allowed to be same as input)
- * @return {Point} The new point, transformed through this matrix
- */
-Phaser.Matrix.prototype.apply = function(pos, newPos)
-{
-    newPos = newPos || new Phaser.Point();
-
-    var x = pos.x;
-    var y = pos.y;
-
-    newPos.x = this.a * x + this.c * y + this.tx;
-    newPos.y = this.b * x + this.d * y + this.ty;
-
-    return newPos;
-};
-
-/**
- * Get a new position with the inverse of the current transformation applied.
- * Can be used to go from the world coordinate space to a child's coordinate space. (e.g. input)
- *
- * @method applyInverse
- * @param pos {Point} The origin
- * @param [newPos] {Point} The point that the new position is assigned to (allowed to be same as input)
- * @return {Point} The new point, inverse-transformed through this matrix
- */
-Phaser.Matrix.prototype.applyInverse = function(pos, newPos)
-{
-    newPos = newPos || new Phaser.Point();
-
-    var id = 1 / (this.a * this.d + this.c * -this.b);
-    var x = pos.x;
-    var y = pos.y;
-
-    newPos.x = this.d * id * x + -this.c * id * y + (this.ty * this.c - this.tx * this.d) * id;
-    newPos.y = this.a * id * y + -this.b * id * x + (-this.ty * this.a + this.tx * this.b) * id;
-
-    return newPos;
-};
-
-/**
- * Translates the matrix on the x and y.
- * 
- * @method translate
- * @param {Number} x
- * @param {Number} y
- * @return {Matrix} This matrix. Good for chaining method calls.
- **/
-Phaser.Matrix.prototype.translate = function(x, y)
-{
-    this.tx += x;
-    this.ty += y;
-    
-    return this;
-};
-
-/**
- * Applies a scale transformation to the matrix.
- * 
- * @method scale
- * @param {Number} x The amount to scale horizontally
- * @param {Number} y The amount to scale vertically
- * @return {Matrix} This matrix. Good for chaining method calls.
- **/
-Phaser.Matrix.prototype.scale = function(x, y)
-{
-    this.a *= x;
-    this.d *= y;
-    this.c *= x;
-    this.b *= y;
-    this.tx *= x;
-    this.ty *= y;
-
-    return this;
-};
-
-
-/**
- * Applies a rotation transformation to the matrix.
- * @method rotate
- * @param {Number} angle The angle in radians.
- * @return {Matrix} This matrix. Good for chaining method calls.
- **/
-Phaser.Matrix.prototype.rotate = function(angle)
-{
-    var cos = Math.cos( angle );
-    var sin = Math.sin( angle );
-
-    var a1 = this.a;
-    var c1 = this.c;
-    var tx1 = this.tx;
-
-    this.a = a1 * cos-this.b * sin;
-    this.b = a1 * sin+this.b * cos;
-    this.c = c1 * cos-this.d * sin;
-    this.d = c1 * sin+this.d * cos;
-    this.tx = tx1 * cos - this.ty * sin;
-    this.ty = tx1 * sin + this.ty * cos;
- 
-    return this;
-};
-
-/**
- * Appends the given Matrix to this Matrix.
- * 
- * @method append
- * @param {Matrix} matrix
- * @return {Matrix} This matrix. Good for chaining method calls.
- */
-Phaser.Matrix.prototype.append = function(matrix)
-{
-    var a1 = this.a;
-    var b1 = this.b;
-    var c1 = this.c;
-    var d1 = this.d;
-
-    this.a  = matrix.a * a1 + matrix.b * c1;
-    this.b  = matrix.a * b1 + matrix.b * d1;
-    this.c  = matrix.c * a1 + matrix.d * c1;
-    this.d  = matrix.c * b1 + matrix.d * d1;
-
-    this.tx = matrix.tx * a1 + matrix.ty * c1 + this.tx;
-    this.ty = matrix.tx * b1 + matrix.ty * d1 + this.ty;
-    
-    return this;
-};
-
-/**
- * Resets this Matix to an identity (default) matrix.
- * 
- * @method identity
- * @return {Matrix} This matrix. Good for chaining method calls.
- */
-Phaser.Matrix.prototype.identity = function()
-{
-    this.a = 1;
-    this.b = 0;
-    this.c = 0;
-    this.d = 1;
-    this.tx = 0;
-    this.ty = 0;
-
-    return this;
 };
 
 Phaser.identityMatrix = new Phaser.Matrix();
@@ -1761,7 +1957,7 @@ Phaser.Point.prototype = {
     /**
     * Sets the `x` and `y` values of this Point object to the given values.
     * If you omit the `y` value then the `x` value will be applied to both, for example:
-    * `Point.setTo(2)` is the same as `Point.setTo(2, 2)`
+    * `Point.set(2)` is the same as `Point.set(2, 2)`
     *
     * @method Phaser.Point#set
     * @param {number} x - The horizontal value of this point.
@@ -1982,7 +2178,7 @@ Phaser.Point.prototype = {
     * @param {number} x - The x coordinate of the anchor point.
     * @param {number} y - The y coordinate of the anchor point.
     * @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the Point to.
-    * @param {boolean} asDegrees - Is the given rotation in radians (false) or degrees (true)?
+    * @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
     * @param {number} [distance] - An optional distance constraint between the Point and the anchor.
     * @return {Phaser.Point} The modified point object.
     */
@@ -2459,36 +2655,44 @@ Phaser.Point.normalize = function (a, out) {
 };
 
 /**
-* Rotates a Point around the x/y coordinates given to the desired angle.
+* Rotates a Point object, or any object with exposed x/y properties, around the given coordinates by
+* the angle specified. If the angle between the point and coordinates was 45 deg and the angle argument
+* is 45 deg then the resulting angle will be 90 deg, as the angle argument is added to the current angle.
+*
+* The distance allows you to specify a distance constraint for the rotation between the point and the 
+* coordinates. If none is given the distance between the two is calculated and used.
 *
 * @method Phaser.Point.rotate
 * @param {Phaser.Point} a - The Point object to rotate.
 * @param {number} x - The x coordinate of the anchor point
 * @param {number} y - The y coordinate of the anchor point
-* @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the Point to.
-* @param {boolean} [asDegrees=false] - Is the given rotation in radians (false) or degrees (true)?
+* @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the Point by.
+* @param {boolean} [asDegrees=false] - Is the given angle in radians (false) or degrees (true)?
 * @param {number} [distance] - An optional distance constraint between the Point and the anchor.
 * @return {Phaser.Point} The modified point object.
 */
 Phaser.Point.rotate = function (a, x, y, angle, asDegrees, distance) {
 
-    asDegrees = asDegrees || false;
-    distance = distance || null;
+    if (typeof asDegrees === 'undefined') { asDegrees = false; }
+    if (typeof distance === 'undefined') { distance = null; }
 
     if (asDegrees)
     {
         angle = Phaser.Math.degToRad(angle);
     }
 
-    //  Get distance from origin (cx/cy) to this point
     if (distance === null)
     {
+        //  Get distance from origin (cx/cy) to this point
         distance = Math.sqrt(((x - a.x) * (x - a.x)) + ((y - a.y) * (y - a.y)));
     }
 
-    var requiredAngle = angle + Math.atan2(a.y - y, a.x - x);
+    var t = angle + Math.atan2(a.y - y, a.x - x);
 
-    return a.setTo(x + distance * Math.cos(requiredAngle), y + distance * Math.sin(requiredAngle));
+    a.x = x + distance * Math.cos(t);
+    a.y = y + distance * Math.sin(t);
+
+    return a;
 
 };
 
@@ -3025,6 +3229,30 @@ Phaser.Rectangle.prototype = {
     },
 
     /**
+    * Runs Math.ceil() on both the x and y values of this Rectangle.
+    * @method Phaser.Rectangle#ceil
+    */
+    ceil: function () {
+
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
+
+    },
+
+    /**
+    * Runs Math.ceil() on the x, y, width and height values of this Rectangle.
+    * @method Phaser.Rectangle#ceilAll
+    */
+    ceilAll: function () {
+
+        this.x = Math.ceil(this.x);
+        this.y = Math.ceil(this.y);
+        this.width = Math.ceil(this.width);
+        this.height = Math.ceil(this.height);
+
+    },
+
+    /**
     * Copies the x, y, width and height properties from any given object to this Rectangle.
     * @method Phaser.Rectangle#copyFrom
     * @param {any} source - The object to copy from.
@@ -3075,6 +3303,24 @@ Phaser.Rectangle.prototype = {
     size: function (output) {
 
         return Phaser.Rectangle.size(this, output);
+
+    },
+
+    /**
+    * Resize the Rectangle by providing a new width and height.
+    * The x and y positions remain unchanged.
+    * 
+    * @method Phaser.Rectangle#resize
+    * @param {number} width - The width of the Rectangle. Should always be either zero or a positive value.
+    * @param {number} height - The height of the Rectangle. Should always be either zero or a positive value.
+    * @return {Phaser.Rectangle} This Rectangle object
+    */
+    resize: function (width, height) {
+
+        this.width = width;
+        this.height = height;
+
+        return this;
 
     },
 
@@ -3187,6 +3433,25 @@ Phaser.Rectangle.prototype = {
     },
 
     /**
+    * Returns a uniformly distributed random point from anywhere within this Rectangle.
+    * 
+    * @method Phaser.Rectangle#random
+    * @param {Phaser.Point|object} [out] - A Phaser.Point, or any object with public x/y properties, that the values will be set in.
+    *     If no object is provided a new Phaser.Point object will be created. In high performance areas avoid this by re-using an existing object.
+    * @return {Phaser.Point} An object containing the random point in its `x` and `y` properties.
+    */
+    random: function (out) {
+
+        if (typeof out === 'undefined') { out = new Phaser.Point(); }
+
+        out.x = this.randomX;
+        out.y = this.randomY;
+
+        return out;
+
+    },
+
+    /**
     * Returns a string representation of this object.
     * @method Phaser.Rectangle#toString
     * @return {string} A string representation of the instance.
@@ -3237,18 +3502,41 @@ Object.defineProperty(Phaser.Rectangle.prototype, "bottom", {
     },
 
     set: function (value) {
-        if (value <= this.y) {
+
+        if (value <= this.y)
+        {
             this.height = 0;
-        } else {
+        }
+        else
+        {
             this.height = value - this.y;
         }
+
+    }
+
+});
+
+/**
+* The location of the Rectangles bottom left corner as a Point object.
+* @name Phaser.Rectangle#bottomLeft
+* @property {Phaser.Point} bottomLeft - Gets or sets the location of the Rectangles bottom left corner as a Point object.
+*/
+Object.defineProperty(Phaser.Rectangle.prototype, "bottomLeft", {
+
+    get: function () {
+        return new Phaser.Point(this.x, this.bottom);
+    },
+
+    set: function (value) {
+        this.x = value.x;
+        this.bottom = value.y;
     }
 
 });
 
 /**
 * The location of the Rectangles bottom right corner as a Point object.
-* @name Phaser.Rectangle#bottom
+* @name Phaser.Rectangle#bottomRight
 * @property {Phaser.Point} bottomRight - Gets or sets the location of the Rectangles bottom right corner as a Point object.
 */
 Object.defineProperty(Phaser.Rectangle.prototype, "bottomRight", {
