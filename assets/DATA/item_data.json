@@ -1,0 +1,24 @@
+{
+    "weapon_blood_sword": {
+        "item_name": "Blood Sword",
+        "rarity": "rare",
+        "attack": 1,
+        "min_attack": 10,
+        "max_attack": 15,
+        "mod_1": "STR_",
+        "mod_2": "VIT_",
+        "mod_3": "DEX_",
+        "mod_4": "INT_",
+        "mod_5": "VAMP_",
+        "mod_6": "UNIQUE_",
+        "uniqueText_6_1": "             If 3rd basic attack is charged, erupts a pillar of blood that deals 10 (+",
+        "uniqueText_6_2": "_physical",
+        "uniqueText_6_3": ") physical damage at the cost of 10% (",
+        "uniqueText_6_4": "_hp",
+        "uniqueText_6_5": ") HP.",
+        "level_required": 1,
+        "speed": 50,
+        "knockback_mod": 200
+
+    }
+}

@@ -1,227 +1,19 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 //var fun4 = null; wont collect this variable, but is this variable just a small reference?
-function init_DB(player_val, obj) {
-
-    var player_string;
-    var player_skeleton;
-    var armature;
-    var armatureName;
-    var skeletonId;
-    var animationId;
-    var skeletonJSON;
-    var atlasJson;
-    var partsList;
-    var texture;
-    var atlasId;
-    var config;
-    var player_display;
-
-    switch (player_val) {
-        case 1:
-            player_string = '';
-            break;
-            default:
-            player_string = '';
-        /*
-        case 2:
-            player_string = '_priest';
-            break;
-
-        case 3:
-            player_string = '_berzerker';
-            break;
-
-        case 4:
-            player_string = '_ranger';
-            break;
-        */
-    }
-
-    player_skeleton = 'player_skeleton_mid' + player_string;
-    // ************************* DRAGONBONES *************************
-    // hardcoded ids for the dragonBones elements to target
-    armatureName = "sprite_base_12";
-    skeletonId = "sprite_base_12";
-    animationId = "idle";
-    // fetch the skeletonData from cache
-    skeletonJSON = obj.game.cache.getJSON(player_skeleton);
-    // fetch the atlas data from cache
-    atlasJson = obj.game.cache.getJSON('player_json_mid' + player_string);
-    // make an array listing the names of which images to use from the atlas
-    partsList = [
-
-        /*
-        "Player-parts-armL",
-        "Player-parts-armR",
-        "Player-parts-armUpperL",
-        "Player-parts-armUpperR",
-        "Player-parts-body",
-        "Player-parts-face",
-        "Player-parts-footL",
-        "Player-parts-footR",
-        "Player-parts-hair",
-        "Player-parts-handL",
-        "Player-parts-handR",
-        "Player-parts-head",
-        "Player-parts-hips",
-        "Player-parts-legL",
-        "Player-parts-legR",
-        "Player-parts-upperLegL",
-        "Player-parts-upperLegR",
-        "Player-parts-weapon",
-
-        "Player-body_equipment-body_e_main",
-        "Player-body_equipment-upperLegR_e_main",
-        "Player-body_equipment-upperLegL_e_main",
-        "Player-body_equipment-hips_e_main",
-        "Player-body_equipment-weapon_e_main",
-
-        //"Player-body_equipment-training_outfit_01-body_e",
-        //"Player-body_equipment-training_outfit_01-legs-upperLegR_e",
-        //"Player-body_equipment-training_outfit_01-legs-upperLegL_e",
-        //"Player-body_equipment-training_outfit_01-legs-hips_e",
-        //"Player-body_equipment-training_outfit_02-body_e",
-        //"Player-body_equipment-training_outfit_02-legs-upperLegR_e",
-        //"Player-body_equipment-training_outfit_02-legs-upperLegL_e",
-        //"Player-body_equipment-training_outfit_02-legs-hips_e",
-
-        "Player-weapons-swords-ice_sword"
-        */
-    ];
-
-    texture = obj.game.cache.getImage("player_image_mid" + player_string);
-    atlasId = 'player_atlas_mid' + player_string;
-
-    config = {
-        armatureName: armatureName,
-        skeletonId: skeletonId,
-        animationId: animationId,
-        atlasId: atlasId,
-        partsList: partsList
-    };
-
-    // Create the armature
-    obj.armature = dragonBones.makeArmaturePhaser(config, skeletonJSON, atlasJson, texture);
-
-    // ----- Event listeners -----
-    //armature.addEventListener(events.AnimationEvent.FADE_IN, obj.event_handler);
-    //armature.addEventListener(obj.game.events.FrameEvent.ANIMATION_FRAME_EVENT, _player.e.frame_event_handler);
-    //armature.addEventListener(obj.game.events.AnimationEvent.COMPLETE, obj.complete_event_handler);
-
-    // ----- Start animation! -----
-    //obj.armature.animation.gotoAndPlay("dash", 0.2);
-    obj.armature.animation.gotoAndPlay("combat_idle", 0.2);
-
-    /*
-    var rnd;
-    rnd = obj.game.rnd.integerInRange(1, 100)
-
-    if (rnd < 25) 
-    obj.armature.animation.gotoAndPlay("sit", 0.2);
-    else if (rnd >= 25 && rnd < 50)
-    obj.armature.animation.gotoAndPlay("combat_idle", 0.2);
-    else if (rnd >= 50 && rnd < 75)
-    obj.armature.animation.gotoAndPlay("idle", 0.2);
-    else if (rnd >= 75)
-    obj.armature.animation.gotoAndPlay("walk_02", 0.2);
-
-    rnd = null;
-    */
-    
-    //armature.getSlot("face").getChildArmature().getSlot("eyes").armature.animation.gotoAndPlay("blink", 0.2);
 
 
-    //console.log(obj.game.rnd.realInRange(0.8, 0.9))
-    //**COMMENTED OUT 1/21/15, UNKNOWN: armature.animation.getAnimationDataList()[0].duration = obj.game.rnd.realInRange(0, 1);
-    //console.log(armature.animation.getAnimationDataList(0));
+window.onload = function () {
 
-
-
-    /*
-    armature.getSlot("body");
-    armature.getSlot("hips");
-    armature.getSlot("head");
-    armature.getSlot("face");
-    armature.getSlot("upperArmR");
-    armature.getSlot("upperArmL");
-    armature.getSlot("upperLegR");
-    armature.getSlot("upperLegL");
-    armature.getSlot("armR");
-    armature.getSlot("armL");
-    armature.getSlot("legR");
-    armature.getSlot("legL");
-    armature.getSlot("weapon");
-    */
-
-
-    //_body.getChildArmature().getSlot("equip").setDisplay(null);
-    //_hips.getChildArmature().getSlot("equip").setDisplay(null);
-    //_upperLegL.getChildArmature().getSlot("equip").setDisplay(null);
-    //_upperLegR.getChildArmature().getSlot("equip").setDisplay(null);
-
-
-    //_body.getChildArmature().getSlot("equip").armature.animation.gotoAndPlay("green_glow", 0.2);
-    //_weapon.getChildArmature().getSlot("equip").armature.animation.gotoAndPlay("red_glow", 0.2);
-
-
-    //_body.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-body_e"));
-    //_hips.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-hips_e"));
-    //_upperLegL.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-upperLegL_e"));
-    //_upperLegR.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-upperLegR_e"));
-
-    //bonesBase.x = 300;
-    //bonesBase.y = 500;
-    player_display = obj.armature.getDisplay();
-    obj.add(player_display);
-}
-
-var window = {};
-window.devicePixelRatio = 1;
-
-//window.onload = function () {
-
-    var SAFE_ZONE_WIDTH = 960;
-    var SAFE_ZONE_HEIGHT = 640;
     var width = window.innerWidth * window.devicePixelRatio;
     var height = window.innerHeight * window.devicePixelRatio;
-    /*
-    var landWidth, landHeight;
-
-    if ( height > width ) {
-        landWidth = height;
-        landHeight = width;
-    } else {
-        landWidth = width;
-        landHeight = height;
-    }
-    var aspectRatioDevice = landWidth/landHeight;
-
-    var aspectRatioSafeZone = SAFE_ZONE_WIDTH / SAFE_ZONE_HEIGHT;
-
-    var extraWidth = 0, extraHeight = 0;
-
-    if (aspectRatioSafeZone < aspectRatioDevice) {
-        extraWidth = aspectRatioDevice * SAFE_ZONE_WIDTH - SAFE_ZONE_HEIGHT;
-    } else {
-        extraHeight = SAFE_ZONE_HEIGHT / aspectRatioDevice - SAFE_ZONE_WIDTH;
-    }
-    */
 
     if (window.devicePixelRatio == 1)
-        var game = new Phaser.Game(960, 640, Phaser.CANVAS, '');
+        var game = new Phaser.Game(960, 640, Phaser.WEB_GL, '');
     else
-        var game = new Phaser.Game(width / (window.devicePixelRatio - 1), height / (window.devicePixelRatio - 1), Phaser.CANVAS, '');
+        var game = new Phaser.Game(width / (window.devicePixelRatio - 1), height / (window.devicePixelRatio - 1), Phaser.WEB_GL, '');
 
-
-    //fun = game;
-    //fun2 = game;
-    //fun3 = game;
-    //fun4 = game;
-
-
-    //console.log(require('/Boot'));
     // Game States
     game.state.add('Boot', require('./states/Boot'));
     game.state.add('Preloader', require('./states/Preloader'));
@@ -232,393 +24,8 @@ window.devicePixelRatio = 1;
     game.state.add('GameState', require('./states/GameState'));
     game.state.add('BattleState', require('./states/BattleState'));
 
-    game.state.start('Boot', true, false, SAFE_ZONE_WIDTH, SAFE_ZONE_HEIGHT);
-
-
-    SAFE_ZONE_WIDTH = null;
-    SAFE_ZONE_HEIGHT = null;
-    width = null;
-    height = null;
-
-    //window.playerDataObj = { perhaps an alternitive? dont know if its any better than game.leveldataobj
-
-    game.levelDataObj = {
-
-
-        // --------------------------------ENEMY GROUPS--------------------------------
-        "enemy_group_1": [
-
-            "slime",
-            "enemy_formation_1"
-        ],
-
-        "enemy_group_2": [
-
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "enemy_formation_2"
-
-        ],
-
-        "enemy_group_3": [
-
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "enemy_formation_2"
-        ],
-
-        "enemy_group_4": [
-
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "slime",
-            "enemy_formation_3"
-        ],
-
-
-        // ------------------------------ENEMY FORMATIONS------------------------------
-        "enemy_formation_1": [
-
-            // 3
-            [
-                0, 0, 0, 1,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            ]
-        ],
-
-        "enemy_formation_2": [
-
-            // 5
-            [
-                0, 0, 0, 1,
-                0, 0, 1, 1,
-                0, 1, 1, 0
-            ]
-        ],
-
-        "enemy_formation_3": [
-
-            // 6
-            [
-                0, 1, 0, 1,
-                0, 1, 1, 0,
-                0, 0, 1, 1
-            ]
-        ]
-    }
-
-
-
-
-    game.playerDataObj = {
-
-        "player_1": {
-
-            "level": 1,
-
-            "min_attack": 0,
-            "max_attack": 0,
-
-            "strength": 3,
-            "vitality": 5,
-            "dexterity": 2,
-            "intelligence": 1,
-            "luck": 1,
-
-            "health_steal": 0,
-            "speed": 300,
-
-            "hit_stun": 500,
-
-            "skills": [
-                "swing",
-                "fireball",
-                "heal",
-                "focus"
-            ]
-
-        },
-
-
-        "player_2": {
-
-            "level": 1,
-
-            "min_attack": 0,
-            "max_attack": 0,
-
-            "strength": 3,
-            "vitality": 5,
-            "dexterity": 2,
-            "intelligence": 1,
-            "luck": 1,
-
-            "health_steal": 0,
-            "speed": 300,
-
-            "hit_stun": 500,
-
-            "skills": [
-                "swing",
-                "fireball",
-                "heal",
-                "focus"
-            ]
-
-        },
-
-
-        "player_3": {
-
-            "level": 1,
-
-            "min_attack": 0,
-            "max_attack": 0,
-
-            "strength": 3,
-            "vitality": 5,
-            "dexterity": 2,
-            "intelligence": 1,
-            "luck": 1,
-
-            "health_steal": 0,
-            "speed": 300,
-
-            "hit_stun": 500,
-
-            "skills": [
-                "swing",
-                "fireball",
-                "heal",
-                "focus"
-            ]
-
-        },
-
-
-        "player_4": {
-
-            "level": 1,
-
-            "min_attack": 0,
-            "max_attack": 0,
-
-            "strength": 3,
-            "vitality": 5,
-            "dexterity": 2,
-            "intelligence": 1,
-            "luck": 1,
-
-            "health_steal": 0,
-            "speed": 300,
-
-            "hit_stun": 500,
-
-            "skills": [
-                "fireball",
-                "fireball",
-                "heal",
-                "focus"
-            ]
-
-        }
-    }
-
-
-
-
-
-
-    game.formationDataObj = {
-
-        "formation_1": [
-            [0, 0],
-            [1, 2],
-            [2, 0],
-            [3, 2]
-        ],
-        "formation_2": [
-            [0, 0],
-            [0, 1],
-            [0, 2],
-            [1, 2]
-        ],
-        "formation_3": [
-            [0, 0],
-            [1, 1],
-            [3, 0],
-            [3, 2]
-        ]
-    }
-
-
-
-
-    game.itemDataObj = {
-
-        "weapon_blood_sword": {
-            "item_name": "Blood Sword",
-            "rarity": "rare",
-            "attack": 1,
-            "min_attack": 10,
-            "max_attack": 15,
-            "mod_1": "STR_" + "+3",
-            "mod_2": "VIT_" + "+5",
-            "mod_3": "DEX_" + "+0",
-            "mod_4": "INT_" + "+5",
-            "mod_5": "VAMP_" + "+10%",
-            "mod_6": "UNIQUE_" + "blood slash",
-
-            //"uniqueText_6_1": "             If 3rd basic attack is charged, erupts a pillar of blood that deals 100(0) physical damage at the cost of (2) HP.",
-
-            "uniqueText_6_1": "             If 3rd basic attack is charged, erupts a pillar of blood that deals 10 (+",
-            "uniqueText_6_2": "_physical",
-            "uniqueText_6_3": ") physical damage at the cost of 10% (",
-            "uniqueText_6_4": "_hp",
-            "uniqueText_6_5": ") HP.",
-
-            //"mod_7": "UNIQUE_" + "blood slash",
-            //"uniqueText_7_1": "             If 3rd basic attack is charged, erupts a pillar of blood that deals (",
-            //"uniqueText_7_2": "Bonersexual2",
-            //+ player_body.max_attack + ") physical damage at the cost of (" + 10 + ") HP.",
-            "level_required": 1,
-            "speed": 50,
-            "knockback_mod": 200
-
-        }
-    }
-
-
-
-
-
-
-
-
-    //console.log("window.innerwidth/height: " + window.innerWidth + " " + window.innerHeight);
-    //  console.log(width + " " + height + " " + window.devicePixelRatio);
-
-
-    /*
-    var width = navigator.isCocoonJS ? window.innerWidth : 960;
-    var height = navigator.isCocoonJS ? window.innerHeight : 640;
-    var dips = window.devicePixelRatio;
-    width = width * dips;
-    height = height * dips;
-    */
-
-
-
-
-    /*
-
-    var w = window.innerWidth * window.devicePixelRatio,
-    h = window.innerHeight * window.devicePixelRatio,
-    width = (h > w) ? h : w,
-    height = (h > w) ? w : h;
-
-    // Hack to avoid iPad Retina and large Android devices. Tell it to scale up.
-    if (window.innerWidth >= 1024 && window.devicePixelRatio >= 2)
-    {
-    width = Math.round(width / 2);
-    height = Math.round(height / 2);
-    }
-    // reduce screen size by one 3rd on devices like Nexus 5
-    if (window.devicePixelRatio === 3)
-    {
-    width = Math.round(width / 3) * 2;
-    height = Math.round(height / 3) * 2;
-    }
-    */
-
-
-
-
-
-    /*
-var SAFE_ZONE_WIDTH  = 960;
-var SAFE_ZONE_HEIGHT = 640;
-
-var width  = window.innerWidth * window.devicePixelRatio;
-var height = window.innerHeight * window.devicePixelRatio;
-var landWidth, landHeight;
-
-if ( height > width ) {
-    landWidth = height;
-    landHeight = width;
-} else {
-    landWidth = width;
-    landHeight = height;
-}
-
-var aspectRatioDevice = landHeight/landWidth;
-
-var aspectRatioSafeZone = SAFE_ZONE_HEIGHT / SAFE_ZONE_WIDTH;
-
-var extraWidth = 0, extraHeight = 0;
-
-if (aspectRatioSafeZone < aspectRatioDevice) {
-    extraWidth = aspectRatioDevice * SAFE_ZONE_HEIGHT - SAFE_ZONE_WIDTH;
-} else {
-    extraHeight = SAFE_ZONE_WIDTH / aspectRatioDevice - SAFE_ZONE_HEIGHT;
-}
-
-
-var game = new Phaser.Game(SAFE_ZONE_WIDTH + extraWidth, SAFE_ZONE_HEIGHT + extraHeight, Phaser.CANVAS, '');
-*/
-
-
-
-
-
-
-
-
-
-    /*
-    var doc = window.document;
-
-    // If there's a hash, or addEventListener is undefined, stop here
-    if(!window.navigator.standalone && !location.hash && window.addEventListener ){
-
-        //scroll to 1
-        window.scrollTo( 0, 1 );
-        var scrollTop = 1,
-            getScrollTop = function(){
-                return window.pageYOffset || doc.compatMode === "CSS1Compat" && doc.documentElement.scrollTop || doc.body.scrollTop || 0;
-            },
-
-            //reset to 0 on bodyready, if needed
-            bodycheck = setInterval(function(){
-                if( doc.body ){
-                    clearInterval( bodycheck );
-                    scrollTop = getScrollTop();
-                    window.scrollTo( 0, scrollTop === 1 ? 0 : 1 );
-                }
-            }, 15 );
-
-        window.addEventListener( "load", function(){
-            setTimeout(function(){
-                //at load, if user hasn't scrolled more than 20 or so...
-                if( getScrollTop() < 20 ){
-                    //reset to hide addr bar at onload
-                    window.scrollTo( 0, scrollTop === 1 ? 0 : 1 );
-                }
-            }, 0);
-        }, false );
-    }
-*/
-//};
+    game.state.start('Boot', true, false);
+};
 
 
 },{"./states/BattleState":2,"./states/Boot":3,"./states/GameState":7,"./states/Preloader":8}],2:[function(require,module,exports){
@@ -627,137 +34,8 @@ var Character = require('../states/Character');
 var CharacterUI = require('../states/CharacterUI');
 var Enemy = require('../states/Enemy');
 
-/*
-console.log("fuck")
-const v8flags = require('v8flags');
-console.log(v8flags)
-        v8flags(function (err, results) {
-          console.log(results);  // [ '--use_strict',
-                                 //   '--es5_readonly',
-                                 //   '--es52_globals',
-                                 //   '--harmony_typeof',
-                                 //   '--harmony_scoping',
-                                 //   '--harmony_modules',
-                                 //   '--harmony_proxies',
-                                 //   '--harmony_collections',
-                                 //   '--harmony',
-                                 // ...
-       });
-*/
-
-//console.log("%cUser %s has %d points", "color:orange; background:blue; font-size: 16pt", userName, userPoints);
-
-/*
-var stdout = require('stdout-stream');
-function perf_sensitive() {
-  // Do performance-sensitive work here
-  console.log("lalaladkff");
-}
-
-try {
-  perf_sensitive()
-} catch (e) {
-  // Handle exceptions here
-}
-
-stdout.write('hello\n'); // write should NEVER block 
-stdout.write('non-blocking\n')
-stdout.write('world\n');
-*/
 
 function BattleState() {}
-
-/*
-*monomorphic operations are easiest to specialize, give optimizer most actionable information and enable further optimizations. Hulk-style summary ONE TYPE CLOSE TO METAL!
-  moderately polymorphic operations which require a polymorphic type guard or in the worst case a decision tree are slower then monomorphic ones.
-
-*******
-Decision trees complicate control flow and make it harder for optimizer to propagate types and eliminate redundancies. Memory dependent conditional 
-jumps that constitute those decision trees might be bad news if polymorphic operation is right in the middle of the tight number crunching loop;
-*******
-
-
-******
-Operations are monomorphic if the hidden classes of inputs are always the same - otherwise they are polymorphic, meaning some of the arguments can change type across different calls to the operation. For example, the second add() call in this example causes polymorphism:
-
-function add(x, y) {
-  return x + y;
-}
-
-add(1, 2);      // + in add is monomorphic
-add("a", "b");  // + in add becomes polymorphic
-******
-
-
-
-******
-random: if you break a for loop, do it with a conditional at the beginning of the loop not at the end.
-*/
-
-//ᕕ( ᐛ )ᕗ
-
-// WHAT THE FUCK JSONS?!?! CLOGGIN UP MY DATA WHEN YOUR DATAS NOT BEING USED IT SEEMS LIKE ?? !!
-
-/*
-This often happens (memory leak) when you’ve written your code in such a way that variables and event listeners 
-you don’t require for long are still referenced by some code that no longer has a need to keep those 
-references and thus they can’t be correctly cleaned up by GC.
-*/
-
-if (navigator.isCocoonJS) {
-    cocoonjsphaser.utils.fixDOMParser();
-}
-// BRAVE FRONTIER!!!!! multiple aspect ratios perhaps and etc!!!
-
-// Maybe - Lv. 1, Lv. 2, Lv. 3 for skills, greatly increasing its strength each Lv.
-
-// Choosing skills in combat - drag upward on a characters ui to reveal skill menu below it.
-
-
-// ******************************************************
-// Attacks can CHAIN X3! or HIT X3!.  perpetual hitstun is a chain, perpetual hits are hits.  rogue 3slash chain combo, warrior 3hit chain combo.  combine~~ 6xHIT! 6xCHAIN!
-// hitstun is pretty quick to make chains more difficult.  high enough chain pop-up new option of attack temporarially.  SHABAM!
-
-// choosing skills - press and hold for info on skill, press anywhere on screen to go back. press and release skill quick enough and select skill, close menu.
-// ******************************************************
-
-
-// this.change_camera("player zoom or whatever");
-
-
-//TODO: instead of character class, maybe extend dragonbones.
-//      maybe simplify ui menu useage, just draggable?
-
-//     USE SPRITE.DELTA FOR MENU MOTION!! ITS THE PREV FRAMES X AND THE CURRENT FRAMES X DIFFERENCE!!!
-
-/*
-// use-strict-violator.js 
-a = "I'm the trouble starter, punking instigator"
- 
-module.exports = a;
-
-
-var flags = require('../v8-flags').flags;
-
-console.log('inital use strict', flags.use_strict());
- 
-flags.use_strict(true);
-console.log('set use strict to', flags.use_strict());
- 
-try {
-//  require('./use-strict-violator');
-} catch(err) {
-  console.error('FAIL:', err);
-}
- 
-flags.use_strict(false);
-console.log('set use strict to', flags.use_strict());
-*/
-
-//var violator = require('./use-strict-violator');
-//console.log(violator)
-
-//Function that contains the pattern to be inspected (using with statement)
 
 
 BattleState.prototype = {
@@ -765,51 +43,7 @@ BattleState.prototype = {
 
     preload: function() {
 
-        // ------------------------------- MISC -------------------------------
-        this.game.load.image('black', 'assets/effects/black.png');
-
-
-
-
-        // ------------------------------ FONTS ------------------------------
-        var fileFormat = (this.game.device.cocoonJS) ? '.json' : '.xml';
-        this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_54_0.png', 'assets/fonts/agency_54' + fileFormat);
-        //this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_35_0.png', 'assets/fonts/agency_54' + fileFormat);
-        //this.game.load.bitmapFont('Agency_28', 'assets/fonts/agency_28_0.png', 'assets/fonts/agency_28' + fileFormat);
-
-
-
-
-        // -------------------------------------------------------------------------------------------
-        // ---------------------------------------BATTLE STATE----------------------------------------
-        // -------------------------------------------------------------------------------------------
-        // -------------------------------- UI --------------------------------
-        this.game.load.image('white_flash', 'assets/BATTLE_STATE/UI/white_flash.png');
-        this.game.load.image('battle_background_green', 'assets/BATTLE_STATE/UI/battle_background_green.png');
-        this.game.load.image('battle_floor_tile', 'assets/BATTLE_STATE/UI/battle_floor_tile.png');
-
-        this.game.load.image('battle_hexagon', 'assets/BATTLE_STATE/UI/battle_hexagon.png');
-
-        this.game.load.image('battle_skill_swing', 'assets/BATTLE_STATE/UI/battle_skill_swing.png');
-        this.game.load.image('battle_skill_fireball', 'assets/BATTLE_STATE/UI/battle_skill_fireball.png');
-        this.game.load.image('battle_skill_heal', 'assets/BATTLE_STATE/UI/battle_skill_heal.png');
-        this.game.load.image('battle_skill_focus', 'assets/BATTLE_STATE/UI/battle_skill_focus.png');
-
-        this.game.load.image('battle_player_hp_bar', 'assets/BATTLE_STATE/UI/battle_player_hp_bar.png');
-        this.game.load.image('battle_player_hp_border', 'assets/BATTLE_STATE/UI/battle_player_hp_border.png');
-        this.game.load.image('battle_player_sp_bar', 'assets/BATTLE_STATE/UI/battle_player_sp_bar.png');
-        this.game.load.image('battle_player_sp_border', 'assets/BATTLE_STATE/UI/battle_player_sp_border.png');
-
-        this.game.load.image('battle_char_ui_top', 'assets/BATTLE_STATE/UI/battle_char_ui_top.png');
-        this.game.load.image('battle_char_ui_inner', 'assets/BATTLE_STATE/UI/battle_char_ui_inner.png');
-
-        this.game.load.image('battle_skill_physical_attack_red', 'assets/BATTLE_STATE/UI/battle_skill_physical_attack_red.png');
-        this.game.load.image('battle_skill_magical_attack_blue', 'assets/BATTLE_STATE/UI/battle_skill_magical_attack_blue.png');
-        this.game.load.image('battle_skill_support_green', 'assets/BATTLE_STATE/UI/battle_skill_support_green.png');
-        this.game.load.image('battle_skill_neutral_yellow', 'assets/BATTLE_STATE/UI/battle_skill_neutral_yellow.png');
-
-
-
+        
 
 
         // ----------------------------- SPRITES -----------------------------
@@ -848,8 +82,8 @@ BattleState.prototype = {
 
 
         // *** CACHE CLEANUP ***
-        this.game.cache.removeImage('loaderEmpty');
-        this.game.cache.removeImage('loaderFull');
+        //this.game.cache.removeImage('loaderEmpty');
+        //this.game.cache.removeImage('loaderFull');
     },
 
 
@@ -860,14 +94,26 @@ BattleState.prototype = {
     },
 
 
+    init_dragon_bones: function() {
+
+        //give dragonBones a reference to the game object
+        dragonBones.game = this.game;
+
+        this.game.events = dragonBones.events;
+
+        dragonBones.animation.WorldClock.clock.timeScale = 1;
+    },
+
+
     create: function() {
 
-    
-        
+
+
 
         // -------------------------------- PHASER --------------------------------
         this.game.time.advancedTiming = true;
-        this.game.time.events.loop(16, this.update_db, this);
+        this.init_dragon_bones();
+        this.game.time.events.loop(20, this.update_db, this);
         this.game.world.setBounds(0, 0, 960, 640); // ** Maybe adjust this for camera zooming
 
         this.green = {
@@ -875,6 +121,9 @@ BattleState.prototype = {
             fill: "#00FF00",
             align: "center"
         };
+
+
+
 
         // ------------------------------ VARIABLES -------------------------------
         this.timer = null;
@@ -900,7 +149,6 @@ BattleState.prototype = {
         //this.blue_tint = '0x0087FF';
         //this.green_tint = '0x83FF79';
         //this.yellow_tint = '0xB9A539';
-
 
 
         // ------------------------------- VISUAL --------------------------------
@@ -935,8 +183,10 @@ BattleState.prototype = {
         //**** maybe try taking the whole db/armature out of the character class and not attached as a child to see if anything changes
 
 
+
+
         // ------------------------------- ENEMIES ----------------------------------
-        this.INIT_ENEMIES();
+        //this.INIT_ENEMIES();
 
 
 
@@ -972,18 +222,122 @@ BattleState.prototype = {
         this.timer.add(500, this.fade_in, this);
         //this.timer.add(500, this.INIT_ENEMIES, this);
         this.timer.start();
-
+        this.block = this.game.add.sprite(0, 0, 'battle_hexagon')
 
         //this.game.time.add(this.timer_char_ui, 0, 25, 0, true, this.move_char_ui, this)
+        this.test = 0;
     },
 
 
-    update: function() {},
+    update: function() {
+
+        /*
+        this.test++;
+
+        if (this.game.time.fps < 56) {
+            this.block.x += 1;
+        }
+
+        if (this.test > 2) {
+
+            var num = ((this.game.time.now - this.game.time.prevTime) / 1000);
+            dragonBones.animation.WorldClock.clock.advanceTime(num);
+            this.test = 0;
+        }
+        */
+
+        //num = ((this.game.time.now - this.game.time.prevTime) / 1000) * 2;
+        //console.log(num);
+
+        //dragonBones.animation.WorldClock.clock.advanceTime(0.03);
+
+        //num = ((this.game.time.now - this.game.time.prevTime) / 1000) * 2;
+        //num = ((this.game.time.now - this.game.time.prevTime) / 1000);
+        //console.log(num);
+
+        //dragonBones.animation.WorldClock.clock.advanceTime(0.03);
+
+        //dragonBones.animation.WorldClock.clock.advanceTime(num);        
+    },
 
 
     animation_desync: function(sprite, delay) {
 
         sprite.armature.animation.gotoAndPlay("idle", 0.2);
+    },
+
+
+    init_DB: function(player_val) {
+
+        var player_string;
+        var player_skeleton;
+        var armature;
+        var armatureName;
+        var skeletonId;
+        var animationId;
+        var skeletonJSON;
+        var atlasJson;
+        var partsList;
+        var texture;
+        var atlasId;
+        var config;
+        var player_display;
+
+        player_string = '';
+
+        player_skeleton = 'player_skeleton_mid' + player_string;
+        // ************************* DRAGONBONES *************************
+        // hardcoded ids for the dragonBones elements to target
+        armatureName = "sprite_base_12";
+        skeletonId = "sprite_base_12";
+        animationId = "idle";
+        // fetch the skeletonData from cache
+        skeletonJSON = this.game.cache.getJSON(player_skeleton);
+        // fetch the atlas data from cache
+        atlasJson = this.game.cache.getJSON('player_json_mid' + player_string);
+        // make an array listing the names of which images to use from the atlas
+        partsList = [
+
+            
+            "Player-parts-armL",
+            "Player-parts-armR",
+            "Player-parts-armUpperL",
+            "Player-parts-armUpperR",
+            "Player-parts-body",
+            "Player-parts-face",
+            "Player-parts-footL",
+            "Player-parts-footR",
+            "Player-parts-hair",
+            "Player-parts-handL",
+            "Player-parts-handR",
+            "Player-parts-head",
+            "Player-parts-hips",
+            "Player-parts-legL",
+            "Player-parts-legR",
+            "Player-parts-upperLegL",
+            "Player-parts-upperLegR",
+            "Player-parts-weapon"
+        ];
+
+        texture = this.game.cache.getImage("player_image_mid" + player_string);
+        atlasId = 'player_atlas_mid' + player_string;
+
+        config = {
+            armatureName: armatureName,
+            skeletonId: skeletonId,
+            animationId: animationId,
+            atlasId: atlasId,
+            partsList: partsList
+        };
+
+        // Create the armature
+        armature = dragonBones.makeArmaturePhaser(config, skeletonJSON, atlasJson, texture);
+
+
+        // ----- Start animation! -----
+        armature.animation.gotoAndPlay("combat_idle", 0.2);
+
+        return armature;
     },
 
 
@@ -995,20 +349,30 @@ BattleState.prototype = {
 
     INIT_CHARACTERS: function() {
 
-        this.current_formation = this.game.formationDataObj.formation_3;
+        console.log(this.game.cache.getJSON('formation_data'))
+
+        var formations = this.game.cache.getJSON('formation_data');
+
+        this.current_formation = formations.formation_3;
 
         for (var i = 1; i <= 4; i++) {
 
             // Positions coinside with INIT_UI (floor tiles)
-            var char_x = this.current_formation[i - 1][0] * 92 + (this.current_formation[i - 1][1] * 12);
-            var char_y = this.current_formation[i - 1][1] * 60 - 51;
+            var char_x = this.current_formation[i - 1][0] * 92 + (this.current_formation[i - 1][1] * 12) + 657;
+            var char_y = this.current_formation[i - 1][1] * 60 - 51 + this.g_player_tiles.y + 100;
 
-            this['g_player_' + i] = new Character(this.game, char_x + 602 + 55, char_y + this.g_player_tiles.y + 100, i);
-            this['g_player_' + i].scale.setTo(-1, 1);
-            //this['player_' + i] = this.game.add.sprite(char_x + 602 + 55, char_y + this.g_player_tiles.y + 100, ''); //this.game.height - char_y - 240 (from below...)
-            //this['player_' + i].addChild(this['g_player_' + i]);
-            //this.g_sprite_container.add(this['player_' + i]);
-            // Character positioning seems off depending on the armature..  Bottom right corner of sprite is 0,0
+            
+            this['g_player_' + i] = this.init_DB();
+
+            this['g_player_' + i].getDisplay().x = char_x;
+            this['g_player_' + i].getDisplay().y = char_y;
+            this['g_player_' + i].getDisplay().scale.setTo(-1, 1);
+
+
+            //this['g_player_' + i] = new Character(this.game, char_x + 602 + 55, char_y + this.g_player_tiles.y + 100, i);
+            //this['g_player_' + i].scale.setTo(-1, 1);
+
+            //Bottom right corner of sprite is 0,0
         }
 
         //var fun1;
@@ -1023,7 +387,7 @@ BattleState.prototype = {
         //this.init_sprite("g_player_4");
     },
     init_sprite: function(sprite) {
-        console.log(this[sprite])
+
         //**TEMPORARY!!!**
         //this.ani_start_delay = 0;
         //**TEMPORARY!!!**
@@ -1033,7 +397,7 @@ BattleState.prototype = {
             this[sprite].armature.animation.gotoAndPlay("sit", 0.2);
         }, this);
 
-        this.ani_start_delay += 50;
+        //this.ani_start_delay += 50;
     },
 
 
@@ -1080,7 +444,7 @@ BattleState.prototype = {
 
             // Initial animation delay
             this.game.time.events.add(this.ani_start_delay, this.animation_desync, this, enemy, this.ani_start_delay);
-            this.ani_start_delay += 150;
+            //this.ani_start_delay += 150;
         }
     },
     init_enemy: function() {
@@ -1088,21 +452,23 @@ BattleState.prototype = {
         var enemy;
         var count;
         var enemy_counter;
+        var enemy_formation_json;
 
         count = 0;
         enemy_counter = 0;
+        enemy_formation_json = this.game.cache.getJSON('enemy_formation_data');
 
         for (var u = 0; u <= 12; u++)
-            if (this.game.levelDataObj[this.enemy_formation][0][u] == 1)
-                enemy_counter++;
+            if (enemy_formation_json.enemy_formation_1[0][u] == 1)   //this.game.levelDataObj[this.enemy_formation][0][u]
 
+                enemy_counter++;
             // If there are more enemies than the formation can fit, cut off the enemies from being created.
         if (this.enemy_count == enemy_counter)
             return;
 
         for (var o = 0; o <= 12; o++) {
 
-            if (this.game.levelDataObj[this.enemy_formation][0][o] == 1 && this.enemy_count < this.num_enemies) {
+            if (enemy_formation_json.enemy_formation_1[0][o] == 1 && this.enemy_count < this.num_enemies) {
 
                 count++;
 
@@ -1239,26 +605,23 @@ BattleState.prototype = {
         }
     },
     INIT_UI: function() {
-        
+
+        //when visible/exists = false : total textures: 74 Memory: 3.59 MB (wasted 0.85 MB)
+        //when visible/exists = true  : total textures: 30 Memory: 3.37 MB (wasted 0.85 MB)
+
+
         // Create white flash over character UI
         this.white_flash = this.game.add.sprite(0, -80, 'white_flash');
         this.white_flash.width = 240;
         this.white_flash.height = 650;
         this.white_flash.alpha = 0;
 
+
         // BitmapText objects
-        //this.hp_val_1 = this.game.add.bitmapText(93, 40, 'Agency_54', '123/123', 35); //getAt(13)
-        //this.hp_val_2 = this.game.add.bitmapText(93, 40, 'Agency_54', '123/123', 35); //getAt(13)
-        //this.hp_val_3 = this.game.add.bitmapText(93, 40, 'Agency_54', '123/123', 35); //getAt(13)
-        //this.hp_val_4 = this.game.add.bitmapText(93, 40, 'Agency_54', '123/123', 35); //getAt(13)
-
-        //sp_val = this.game.add.bitmapText(93, 155, 'Agency_54', '12/12', 35); //getAt(14)
-
         this.g_player_UI_1 = new CharacterUI(this.game, 1, this.move_char_ui);
         this.g_player_UI_2 = new CharacterUI(this.game, 2, this.move_char_ui);
         this.g_player_UI_3 = new CharacterUI(this.game, 3, this.move_char_ui);
-        this.g_player_UI_4  = new CharacterUI(this.game, 4, this.move_char_ui);
-
+        this.g_player_UI_4 = new CharacterUI(this.game, 4, this.move_char_ui);
 
 
         // Create black screen
@@ -1375,11 +738,17 @@ BattleState.prototype = {
 
     update_db: function() {
 
-        //var num;
+        var num;
 
-        //num = ((this.game.time.now - this.game.time.prevTime) / 1000) * 2;
+        num = ((this.game.time.now - this.game.time.prevTime) / 1000);
 
-        dragonBones.animation.WorldClock.clock.advanceTime(0.03);
+        //dragonBones.animation.WorldClock.clock.advanceTime(0.03);
+
+        dragonBones.animation.WorldClock.clock.advanceTime(num);
+
+        if (this.game.time.fps < 56) {
+            this.block.x += 1;
+        }
     },
 
 
@@ -1545,10 +914,10 @@ BattleState.prototype = {
                 this.selected_ui.getAt(i).visible = true;
 
             // Start the UI movement timer
-            if (!this.selected_ui.timer.running) 
+            if (!this.selected_ui.timer.running)
                 this.selected_ui.timer.start();
-             else 
-                this.selected_ui.timer.resume();   
+            else
+                this.selected_ui.timer.resume();
         }
     },
     move_char_ui: function() { // this = ui_group
@@ -1585,7 +954,7 @@ BattleState.prototype = {
             this.y_adjustment = 0;
             return;
         }
-        
+
 
         // Amount to move UI by.  If a different UI is selected, set tween_y to 0 and later set y_adjustment to prev_y_adjustment.
         if (this.game.input.activePointer.x > loc_x_start && this.game.input.activePointer.x <= loc_x_end) {
@@ -1618,7 +987,7 @@ BattleState.prototype = {
 
 
             if (this.y_adjustment < 1 && this.y_adjustment > -1)
-                this.timer.pause();            
+                this.timer.pause();
             return;
         }
 
@@ -1823,6 +1192,7 @@ BattleState.prototype = {
         this.black.alpha = 0;
 
         // **ADDED THIS BUT DID NOT COMPENSATE FOR YET**
+        this.black.visible = false;
         this.black.exists = false;
         //this.toggle_camera();
     },
@@ -1910,12 +1280,6 @@ Boot.prototype = {
         this.game.load.image('loaderFull', 'assets/UI/loaderFull.png');
     },
 
-    init: function (SAFE_ZONE_WIDTH, SAFE_ZONE_HEIGHT) {
-
-        this.SAFE_ZONE_WIDTH = SAFE_ZONE_WIDTH;
-        this.SAFE_ZONE_HEIGHT = SAFE_ZONE_HEIGHT;
-    },
-
     create: function () {
 
         //if (navigator.isCocoonJS) {
@@ -1928,7 +1292,6 @@ Boot.prototype = {
         //    }
         //}
 
-
         if (this.game.device.desktop) {
 
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -1936,190 +1299,42 @@ Boot.prototype = {
             this.game.scale.maxHeight = 640;
             this.game.scale.pageAlignHorizontally = true;
             this.game.scale.pageAlignVertically = true;
-
-            this.game.SCALE_WIDTH = 1;
-            this.game.SCALE_HEIGHT = 1;
         } else {
 
+            this.game.scale.maxWidth = 960;
+            this.game.scale.maxHeight = 640;
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             this.game.scale.setShowAll();
             this.game.scale.pageAlignHorizontally = true;
             this.game.scale.pageAlignVeritcally = true;
             this.game.scale.refresh();
-
-            //this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-            //this.game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-            //this.game.scale.setScreenSize(true);
-
-            //this.game.SCALE_WIDTH = 0.5;
-            //this.game.SCALE_HEIGHT = 0.5;
         }
+
+        // 7/13/2015 - doesnt look so bad, but going with show_all manual x/y adjustments to be safe
+        //this.game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+        //this.game.scale.setScreenSize();
 
         //if (this.game.device.desktop)
         //    this.game.add.plugin(Phaser.Plugin.Debug);
 
-        this.game.input.touch.preventDefault = true;
-        this.game.state.start('Preloader', true, false, this.SAFE_ZONE_WIDTH, this.SAFE_ZONE_HEIGHT);
-
-        this.SAFE_ZONE_HEIGHT = null;
-        this.SAFE_ZONE_WIDTH = null;
+        this.game.state.start('Preloader', true, false);
     }
 }
 
 module.exports = Boot;
-
-
-
-
-
-//if (screen.orientation.lock)
-//    screen.orientation.lock('landscape');
-
-//this.setupScaling();
-
-//this.game.scale.maxWidth = 960;
-//this.game.scale.maxHeight = 640;
-
-//if (this.game.device.android && this.game.device.chrome == false) {
-//    this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-//    this.game.stage.scale.maxIterations = 1;
-//}
-
-/*
-
-getRatio: function (type, w, h) {
-
-    var width = navigator.isCocoonJS ? window.innerWidth : w,
-        height = navigator.isCocoonJS ? window.innerHeight : h;
-
-    var dips = window.devicePixelRatio;
-    width = width * dips;
-    height = height * dips;
-
-    var scaleX = width / w,
-        scaleY = height / h,
-        result = {
-            x: 1,
-            y: 1
-        };
-
-    switch (type) {
-        case 'all':
-            result.x = scaleX > scaleY ? scaleY : scaleX;
-            result.y = scaleX > scaleY ? scaleY : scaleX;
-            break;
-        case 'fit':
-            result.x = scaleX > scaleY ? scaleX : scaleY;
-            result.y = scaleX > scaleY ? scaleX : scaleY;
-            break;
-        case 'fill':
-            result.x = scaleX;
-            result.y = scaleY;
-            break;
-    }
-
-    return result;
-},
-
-setupScaling: function () {
-
-    if (navigator.isCocoonJS) {
-
-        var ratio = this.getRatio('git', 960, 640);
-        this.game.world.scale.x = ratio.x;
-        this.game.world.scale.y = ratio.y;
-        this.game.world.updateTransform();
-    }
-    else {
-        if (this.game.device.desktop) {
-            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.game.scale.pageAlignHorizontally = true;
-            this.game.scale.pageAlignVertically = true;
-            this.game.scale.setScreenSize(true);
-        }
-        else {
-            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            this.game.scale.pageAlignHorizontally = true;
-            this.game.scale.pageAlignVertically = true;
-            this.game.scale.forceOrientation(false, true, 'orientation');
-            this.game.scale.setScreenSize(true);
-        }
-    }
-
-    this.game.world.setBounds(0, 0, 960, 640);
-},
-*/
-
-
-
-
-
-
-
-/*
-        if (this.game.device.desktop) {
-
-            this.game.scale.maxWidth = 960;
-            this.game.scale.maxHeight = 640;
-            this.global_mobile_enabled = false;
-            this.game.scale.pageAlignHorizontally = true;
-            this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-        } else {
-
-            this.game.scale.scaleMode = Phaser.ScaleManager.RESIZE;
-            this.game.scale.setMinMax(480, 260, 960, 640);
-            this.game.scale.pageAlignHorizontally = true;
-            this.game.scale.pageAlignVertically = true;
-            this.game.scale.forceOrientation(true, false);
-            //this.game.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
-            //this.game.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
-        }
-*/
-
 },{}],4:[function(require,module,exports){
 'use strict';
 // don't forget.. you're using WEAPON stats here, so when you start changing equips, they need to update here too
 
 var Character = function(game, x, y, player_val) {
 
-    //console.log(player_val)
+
     // ----- Init -----
     Phaser.Group.call(this, game);
-    //this.enableBody = true;
-    //this.physicsBodyType = Phaser.Physics.ARCADE;
     this.name = 'character';
     this.x = x;
     this.y = y;
     this.index = player_val;
-
-
-    //this._body = armature.getSlot("body").getDisplay();
-    //this._weapon = armature.getSlot("weapon").getDisplay();
-    //this._footR = armature.getSlot("footR").getDisplay();
-    //this._footL = armature.getSlot("footL").getDisplay();
-    //armature.getSlot("footR").getChildArmature().getSlot("skin").armature.animation.gotoAndPlay("front");
-
-
-    /*
-    this._hips = armature.getSlot("hips").getDisplay();
-    this._head = armature.getSlot("head").getDisplay();
-    this._face = armature.getSlot("face").getDisplay();
-    this._upperArmR = armature.getSlot("upperArmR");
-    this._upperArmL = armature.getSlot("upperArmL");
-    this._upperLegR = armature.getSlot("upperLegR");
-    this._upperLegL = armature.getSlot("upperLegL");
-    this._armR = armature.getSlot("armR").getDisplay();
-    this._armL = armature.getSlot("armL").getDisplay();
-    this._legR = armature.getSlot("legR").getDisplay();
-    this._legL = armature.getSlot("legL").getDisplay();
-    */
-
-
-
-
-    // ----- Local Storage -----
-    //localStorage["weapon"] = "blood-sword";
-
 
 
 
@@ -2134,44 +1349,15 @@ var Character = function(game, x, y, player_val) {
     this.active_skill = '';
     this.next_skill = '';
     this.armature = null;
-    //this.enableBody = true;
-    //this.physicsBodyType = Phaser.Physics.ARCADE;
 
 
     this.init_DB(1 /*player_val*/ );
 
 
-    // ----- Timers ------
-    //this.t_main = this.game.time.create(false);
-    //this.t_main.start();
-
-
-
-
-    // ----- Tweens -----
-    //this.tw_inventory_enter = this.game.add.tween(this).to({ x: 435, y: 490 }, 800, Phaser.Easing.Quadratic.Out, false, 0, false);
-    //this.tw_inventory_exit = this.game.add.tween(this).to({ x: 800, y: 500 }, 800, Phaser.Easing.Quadratic.Out, false, 0, false);
-    //this.tw_platform_walk = this.game.add.tween(this).to({ x: '+40', y: '+40' }, 2000, Phaser.Easing.Quadratic.Out, false, 0, false);
-
-
-
-    // -------------------------------------------------EQUIPMENT--------------------------------------------------
-    /*
-    this.weapon = new Item(this.entity.x, this.entity.y, 4, 9, 0, "weapon", "weapon_blood_sword", "weapon instance 1", this.entity);
-    this.weapon.alpha = 0;
-    this.entity.r_attack_hit_box = this.weapon.r_attack_hit_box;
-
-    this.entity.min_attack = this.entity.strength * 2 + this.weapon.min_attack;
-    this.entity.max_attack = this.entity.strength * 2 + this.weapon.max_attack;
-    this.entity.knockback_mod = this.weapon.knockback_mod;
-    this.entity.hitbox_count = this.hitbox_count;
-    */
-
-
-
-
     // ----- Stats -----
-    var data = this.game.playerDataObj['player_' + player_val];
+    var character_json = this.game.cache.getJSON('character_data');
+
+    var data = character_json.player_1;
 
     this.max_attack = data.max_attack;
     this.level = data.level;
@@ -2192,18 +1378,10 @@ var Character = function(game, x, y, player_val) {
 
     this.skills = data.skills;
 
+    data = null;
+
     this.max_health = this.vitality * 10;
     this.hp = this.max_health;
-
-    /**
-     * 0 = dir
-     */
-    //this._cache = [ 0, 0, 0, 0, 1, 0, 1, 0, 0 ];
-
-    //this.display_sprite = armature.getDisplay();
-    //this.game.physics.enable(this.display_sprite, Phaser.Physics.ARCADE);
-
-    //console.log(this.display_sprite)
 
     // *-*-* DEBUG - error on adding new properties outside constructor (avoiding polymorphic) *-*-*    
     //Object.preventExtensions(this);
@@ -2212,13 +1390,6 @@ var Character = function(game, x, y, player_val) {
 Character.prototype = Object.create(Phaser.Group.prototype);
 Character.prototype.constructor = Character;
 
-
-/*
-Character.prototype.complete_event_handler = function() {
-
-    console.log("ohi");
-}
-*/
 
 
 Character.prototype.init_DB = function(player_val) {
@@ -2290,24 +1461,7 @@ Character.prototype.init_DB = function(player_val) {
         "Player-parts-legR",
         "Player-parts-upperLegL",
         "Player-parts-upperLegR",
-        "Player-parts-weapon",
-
-        "Player-body_equipment-body_e_main",
-        "Player-body_equipment-upperLegR_e_main",
-        "Player-body_equipment-upperLegL_e_main",
-        "Player-body_equipment-hips_e_main",
-        "Player-body_equipment-weapon_e_main",
-
-        //"Player-body_equipment-training_outfit_01-body_e",
-        //"Player-body_equipment-training_outfit_01-legs-upperLegR_e",
-        //"Player-body_equipment-training_outfit_01-legs-upperLegL_e",
-        //"Player-body_equipment-training_outfit_01-legs-hips_e",
-        //"Player-body_equipment-training_outfit_02-body_e",
-        //"Player-body_equipment-training_outfit_02-legs-upperLegR_e",
-        //"Player-body_equipment-training_outfit_02-legs-upperLegL_e",
-        //"Player-body_equipment-training_outfit_02-legs-hips_e",
-
-        "Player-weapons-swords-ice_sword"
+        "Player-parts-weapon"
         */
     ];
 
@@ -2325,99 +1479,14 @@ Character.prototype.init_DB = function(player_val) {
     // Create the armature
     this.armature = dragonBones.makeArmaturePhaser(config, skeletonJSON, atlasJson, texture);
 
-    // ----- Event listeners -----
-    //armature.addEventListener(events.AnimationEvent.FADE_IN, this.event_handler);
-    //armature.addEventListener(this.game.events.FrameEvent.ANIMATION_FRAME_EVENT, _player.e.frame_event_handler);
-    //armature.addEventListener(this.game.events.AnimationEvent.COMPLETE, this.complete_event_handler);
 
     // ----- Start animation! -----
-    //this.armature.animation.gotoAndPlay("dash", 0.2);
     this.armature.animation.gotoAndPlay("combat_idle", 0.2);
 
-    /*
-    var rnd;
-    rnd = this.game.rnd.integerInRange(1, 100)
 
-    if (rnd < 25) 
-    this.armature.animation.gotoAndPlay("sit", 0.2);
-    else if (rnd >= 25 && rnd < 50)
-    this.armature.animation.gotoAndPlay("combat_idle", 0.2);
-    else if (rnd >= 50 && rnd < 75)
-    this.armature.animation.gotoAndPlay("idle", 0.2);
-    else if (rnd >= 75)
-    this.armature.animation.gotoAndPlay("walk_02", 0.2);
-
-    rnd = null;
-    */
-    
-    //armature.getSlot("face").getChildArmature().getSlot("eyes").armature.animation.gotoAndPlay("blink", 0.2);
-
-
-    //console.log(this.game.rnd.realInRange(0.8, 0.9))
-    //**COMMENTED OUT 1/21/15, UNKNOWN: armature.animation.getAnimationDataList()[0].duration = this.game.rnd.realInRange(0, 1);
-    //console.log(armature.animation.getAnimationDataList(0));
-
-
-
-    /*
-    armature.getSlot("body");
-    armature.getSlot("hips");
-    armature.getSlot("head");
-    armature.getSlot("face");
-    armature.getSlot("upperArmR");
-    armature.getSlot("upperArmL");
-    armature.getSlot("upperLegR");
-    armature.getSlot("upperLegL");
-    armature.getSlot("armR");
-    armature.getSlot("armL");
-    armature.getSlot("legR");
-    armature.getSlot("legL");
-    armature.getSlot("weapon");
-    */
-
-
-    //_body.getChildArmature().getSlot("equip").setDisplay(null);
-    //_hips.getChildArmature().getSlot("equip").setDisplay(null);
-    //_upperLegL.getChildArmature().getSlot("equip").setDisplay(null);
-    //_upperLegR.getChildArmature().getSlot("equip").setDisplay(null);
-
-
-    //_body.getChildArmature().getSlot("equip").armature.animation.gotoAndPlay("green_glow", 0.2);
-    //_weapon.getChildArmature().getSlot("equip").armature.animation.gotoAndPlay("red_glow", 0.2);
-
-
-    //_body.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-body_e"));
-    //_hips.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-hips_e"));
-    //_upperLegL.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-upperLegL_e"));
-    //_upperLegR.getChildArmature().getSlot("equip").setDisplay(factory.getTextureDisplay("body_equipment-training_outfit_01-legs-upperLegR_e"));
-
-    //bonesBase.x = 300;
-    //bonesBase.y = 500;
     player_display = this.armature.getDisplay();
     this.add(player_display);
 }
-
-
-/*
-Object.defineProperty(Character.prototype, "health", {
-
-    get: function() {
-
-        return this.hp;
-
-    },
-
-    set: function(value) {
-
-        if (value >= this.max_health)
-            this.hp = this.max_health;
-        else
-            this.hp -= value;
-
-
-    }
-});
-*/
 
 
 module.exports = Character;
@@ -2475,6 +1544,7 @@ var CharacterUI = function(game, index, move_char_ui) {
     this.prev_y_adjustment = 0;
     this.skill_selected = false;
     this.selected_skill_slot = 0;
+    this.test_incrament = index;
 
     //player_group = this['g_player_' + index];
 
@@ -2511,8 +1581,12 @@ var CharacterUI = function(game, index, move_char_ui) {
     //this.yellow_tint = '0xB9A539';
 
     // BitmapText objects
-    hp_val = this.game.make.bitmapText(93, -30, 'Agency_54', '123/123', 35);
-    sp_val = this.game.make.bitmapText(93, 85, 'Agency_54', '12/12', 35); 
+    //hp_val = this.game.make.bitmapText(93, -30, 'Agency_54', '123/123', 35);
+    //sp_val = this.game.make.bitmapText(93, 85, 'Agency_54', '12/12', 35); 
+    //hp_val = this.game.make.text(93, -30, '123/123', { font: "24px Arial", fill: "#ff0044", align: "center" });
+    //sp_val = this.game.make.text(93, 85, '12/12', { font: "24px Arial", fill: "#ff0044", align: "center" }); 
+    hp_val = this.game.make.sprite(0, 0, '');
+    sp_val = this.game.make.sprite(0, 0, '');
 
     this.text_to_bitmap(13, 125, 'skill', 25, '0xF87046', 1.5, 1.5);              //getAt(17) //orig font size 35
     this.text_to_bitmap(13, 238, 'skill', 25, '0x0087FF', 1.5, 1.5);              //getAt(18) //orig font size 35
@@ -2547,16 +1621,16 @@ var CharacterUI = function(game, index, move_char_ui) {
     this.timer = this.game.time.create(true);
     this.timer.loop(16, this.move_char_ui, this);
 
-    line = this.game.make.graphics(15, -30); //getAt(29)
-    line.lineStyle(2, 0xffffff, 1);
-    line.moveTo(0, 0);
-    line.lineTo(215, 0);
+    //line = this.game.make.graphics(15, -30); //getAt(29)
+    //line.lineStyle(2, 0xffffff, 1);
+    //line.moveTo(0, 0);
+    //line.lineTo(215, 0);
 
     // Make menu assets invisible
-    for (var i = 5; i < 24; i++)
-        this.getAt(i).visible = false;
+    //for (var i = 5; i < 24; i++)
+    //    this.getAt(i).visible = false;
 
-    this.add(line);
+    //this.add(line);
     this.add(hp_val);
     this.add(sp_val);
 
@@ -2566,6 +1640,7 @@ var CharacterUI = function(game, index, move_char_ui) {
 
 CharacterUI.prototype = Object.create(Phaser.Group.prototype);
 CharacterUI.prototype.constructor = CharacterUI;
+
 
 CharacterUI.prototype.text_to_bitmap = function (x, y, string, font_size, tint, scale_x, scale_y) {
 
@@ -2578,10 +1653,17 @@ CharacterUI.prototype.text_to_bitmap = function (x, y, string, font_size, tint, 
     var height;
     var sprite;
 
+
     scale_x = scale_x || 1;
     scale_y = scale_y || 1;
-
-    text = this.game.make.bitmapText(0, 0, 'Agency_54', string, font_size); 
+    text = this.game.add.text(x + (this.index - 1) * 238, y, string, { font: "24px Arial", fill: "#ff0044", align: "center" }); 
+    //text = this.game.make.bitmapText(x, y, 'Agency_54', string, font_size); 
+    console.log(text.x + " " + text.y)
+    text.visible = false;
+    //this.add(text);
+    //this.test_incrament 
+    /*
+    text = this.game.make.bitmapText(0, 0, 'Arial', string, font_size); 
     text.update = null;
 
     width = Math.round(text.width);
@@ -2603,7 +1685,10 @@ CharacterUI.prototype.text_to_bitmap = function (x, y, string, font_size, tint, 
         sprite.scale.setTo(scale_x, scale_y);
 
     text.destroy();
+    */
 }
+
+
 
 CharacterUI.prototype.get_bitmap_size = function (val, div) {
 
@@ -5156,11 +4241,57 @@ Preloader.prototype = {
         this.game.load.image('tooltip_back', 'assets/MENU_STATE/inventory/tooltip_back_02.png');
         this.game.load.image('rare_slot', 'assets/MENU_STATE/inventory/rare_slot.png');
         */
-    },
 
-    init: function(SAFE_ZONE_WIDTH, SAFE_ZONE_HEIGHT) {
-        this.SAFE_ZONE_WIDTH = SAFE_ZONE_WIDTH;
-        this.SAFE_ZONE_HEIGHT = SAFE_ZONE_HEIGHT;
+
+        this.game.load.image('black', 'assets/effects/black.png');
+
+        //this.game.load.json('player_data', 'assets/DATA/player_data.json');
+        this.game.load.json('character_data', 'assets/DATA/character_data.json');
+        this.game.load.json('formation_data', 'assets/DATA/formation_data.json');
+        this.game.load.json('enemy_data', 'assets/DATA/enemy_data.json');
+        this.game.load.json('enemy_formation_data', 'assets/DATA/enemy_formation_data.json');
+
+
+
+        // ------------------------------ FONTS ------------------------------
+        //var fileFormat = (this.game.device.cocoonJS) ? '.json' : '.xml';
+        //var fileFormat = '.json';
+        //this.game.load.text('Agency_FB', 'assets/fonts/agencyFB.ttf');
+        //this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_54_0.png', 'assets/fonts/agency_54' + fileFormat);
+
+        //this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_35_0.png', 'assets/fonts/agency_54' + fileFormat);
+        //this.game.load.bitmapFont('Agency_28', 'assets/fonts/agency_28_0.png', 'assets/fonts/agency_28' + fileFormat);
+
+
+
+
+        // -------------------------------------------------------------------------------------------
+        // ---------------------------------------BATTLE STATE----------------------------------------
+        // -------------------------------------------------------------------------------------------
+        // -------------------------------- UI --------------------------------
+        this.game.load.image('white_flash', 'assets/BATTLE_STATE/UI/white_flash.png');
+        this.game.load.image('battle_background_green', 'assets/BATTLE_STATE/UI/battle_background_green.png');
+        this.game.load.image('battle_floor_tile', 'assets/BATTLE_STATE/UI/battle_floor_tile.png');
+
+        this.game.load.image('battle_hexagon', 'assets/BATTLE_STATE/UI/battle_hexagon.png');
+
+        this.game.load.image('battle_skill_swing', 'assets/BATTLE_STATE/UI/battle_skill_swing.png');
+        this.game.load.image('battle_skill_fireball', 'assets/BATTLE_STATE/UI/battle_skill_fireball.png');
+        this.game.load.image('battle_skill_heal', 'assets/BATTLE_STATE/UI/battle_skill_heal.png');
+        this.game.load.image('battle_skill_focus', 'assets/BATTLE_STATE/UI/battle_skill_focus.png');
+
+        this.game.load.image('battle_player_hp_bar', 'assets/BATTLE_STATE/UI/battle_player_hp_bar.png');
+        this.game.load.image('battle_player_hp_border', 'assets/BATTLE_STATE/UI/battle_player_hp_border.png');
+        this.game.load.image('battle_player_sp_bar', 'assets/BATTLE_STATE/UI/battle_player_sp_bar.png');
+        this.game.load.image('battle_player_sp_border', 'assets/BATTLE_STATE/UI/battle_player_sp_border.png');
+
+        this.game.load.image('battle_char_ui_top', 'assets/BATTLE_STATE/UI/battle_char_ui_top.png');
+        this.game.load.image('battle_char_ui_inner', 'assets/BATTLE_STATE/UI/battle_char_ui_inner.png');
+
+        this.game.load.image('battle_skill_physical_attack_red', 'assets/BATTLE_STATE/UI/battle_skill_physical_attack_red.png');
+        this.game.load.image('battle_skill_magical_attack_blue', 'assets/BATTLE_STATE/UI/battle_skill_magical_attack_blue.png');
+        this.game.load.image('battle_skill_support_green', 'assets/BATTLE_STATE/UI/battle_skill_support_green.png');
+        this.game.load.image('battle_skill_neutral_yellow', 'assets/BATTLE_STATE/UI/battle_skill_neutral_yellow.png');
     },
 
 
@@ -5168,18 +4299,15 @@ Preloader.prototype = {
 
         this.game.prev = this.game.time.now;
 
-        this.init_dragon_bones();
+        //this.init_dragon_bones();
 
         //this.game.state.start('MapState');
         //this.game.state.start('CharacterMenuState');
 
         this.game.state.start('BattleState');
         //this.game.state.start('GameState', true, false, this.SAFE_ZONE_WIDTH, this.SAFE_ZONE_HEIGHT);
-
-
-
-    },
-
+    }
+    /*
     init_dragon_bones: function() {
 
         //give dragonBones a reference to the game object
@@ -5187,9 +4315,10 @@ Preloader.prototype = {
 
         this.game.events = dragonBones.events;
 
-        dragonBones.animation.WorldClock.clock.timeScale = 0.5;
+        dragonBones.animation.WorldClock.clock.timeScale = 1;
     }
+    */
 }
 
 module.exports = Preloader;
-},{}]},{},[1]);
+},{}]},{},[1])

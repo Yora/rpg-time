@@ -1,0 +1,5 @@
+{"deviceName":"SAMSUNG-SGH-I337",
+"osName":"android",
+"osVersion":"5.0.1",
+"traceEvents":[
+{"cat":"__metadata","pid":1,"tid": 36552,"ts":0,"ph":"M","name":"thread_name","args":{"name":"Main Thread"}},{}]}

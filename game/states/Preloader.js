@@ -70,11 +70,57 @@ Preloader.prototype = {
         this.game.load.image('tooltip_back', 'assets/MENU_STATE/inventory/tooltip_back_02.png');
         this.game.load.image('rare_slot', 'assets/MENU_STATE/inventory/rare_slot.png');
         */
-    },
 
-    init: function(SAFE_ZONE_WIDTH, SAFE_ZONE_HEIGHT) {
-        this.SAFE_ZONE_WIDTH = SAFE_ZONE_WIDTH;
-        this.SAFE_ZONE_HEIGHT = SAFE_ZONE_HEIGHT;
+
+        this.game.load.image('black', 'assets/effects/black.png');
+
+        //this.game.load.json('player_data', 'assets/DATA/player_data.json');
+        this.game.load.json('character_data', 'assets/DATA/character_data.json');
+        this.game.load.json('formation_data', 'assets/DATA/formation_data.json');
+        this.game.load.json('enemy_data', 'assets/DATA/enemy_data.json');
+        this.game.load.json('enemy_formation_data', 'assets/DATA/enemy_formation_data.json');
+
+
+
+        // ------------------------------ FONTS ------------------------------
+        //var fileFormat = (this.game.device.cocoonJS) ? '.json' : '.xml';
+        //var fileFormat = '.json';
+        //this.game.load.text('Agency_FB', 'assets/fonts/agencyFB.ttf');
+        //this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_54_0.png', 'assets/fonts/agency_54' + fileFormat);
+
+        //this.game.load.bitmapFont('Agency_54', 'assets/fonts/agency_35_0.png', 'assets/fonts/agency_54' + fileFormat);
+        //this.game.load.bitmapFont('Agency_28', 'assets/fonts/agency_28_0.png', 'assets/fonts/agency_28' + fileFormat);
+
+
+
+
+        // -------------------------------------------------------------------------------------------
+        // ---------------------------------------BATTLE STATE----------------------------------------
+        // -------------------------------------------------------------------------------------------
+        // -------------------------------- UI --------------------------------
+        this.game.load.image('white_flash', 'assets/BATTLE_STATE/UI/white_flash.png');
+        this.game.load.image('battle_background_green', 'assets/BATTLE_STATE/UI/battle_background_green.png');
+        this.game.load.image('battle_floor_tile', 'assets/BATTLE_STATE/UI/battle_floor_tile.png');
+
+        this.game.load.image('battle_hexagon', 'assets/BATTLE_STATE/UI/battle_hexagon.png');
+
+        this.game.load.image('battle_skill_swing', 'assets/BATTLE_STATE/UI/battle_skill_swing.png');
+        this.game.load.image('battle_skill_fireball', 'assets/BATTLE_STATE/UI/battle_skill_fireball.png');
+        this.game.load.image('battle_skill_heal', 'assets/BATTLE_STATE/UI/battle_skill_heal.png');
+        this.game.load.image('battle_skill_focus', 'assets/BATTLE_STATE/UI/battle_skill_focus.png');
+
+        this.game.load.image('battle_player_hp_bar', 'assets/BATTLE_STATE/UI/battle_player_hp_bar.png');
+        this.game.load.image('battle_player_hp_border', 'assets/BATTLE_STATE/UI/battle_player_hp_border.png');
+        this.game.load.image('battle_player_sp_bar', 'assets/BATTLE_STATE/UI/battle_player_sp_bar.png');
+        this.game.load.image('battle_player_sp_border', 'assets/BATTLE_STATE/UI/battle_player_sp_border.png');
+
+        this.game.load.image('battle_char_ui_top', 'assets/BATTLE_STATE/UI/battle_char_ui_top.png');
+        this.game.load.image('battle_char_ui_inner', 'assets/BATTLE_STATE/UI/battle_char_ui_inner.png');
+
+        this.game.load.image('battle_skill_physical_attack_red', 'assets/BATTLE_STATE/UI/battle_skill_physical_attack_red.png');
+        this.game.load.image('battle_skill_magical_attack_blue', 'assets/BATTLE_STATE/UI/battle_skill_magical_attack_blue.png');
+        this.game.load.image('battle_skill_support_green', 'assets/BATTLE_STATE/UI/battle_skill_support_green.png');
+        this.game.load.image('battle_skill_neutral_yellow', 'assets/BATTLE_STATE/UI/battle_skill_neutral_yellow.png');
     },
 
 
@@ -82,18 +128,15 @@ Preloader.prototype = {
 
         this.game.prev = this.game.time.now;
 
-        this.init_dragon_bones();
+        //this.init_dragon_bones();
 
         //this.game.state.start('MapState');
         //this.game.state.start('CharacterMenuState');
 
         this.game.state.start('BattleState');
         //this.game.state.start('GameState', true, false, this.SAFE_ZONE_WIDTH, this.SAFE_ZONE_HEIGHT);
-
-
-
-    },
-
+    }
+    /*
     init_dragon_bones: function() {
 
         //give dragonBones a reference to the game object
@@ -101,8 +144,9 @@ Preloader.prototype = {
 
         this.game.events = dragonBones.events;
 
-        dragonBones.animation.WorldClock.clock.timeScale = 0.5;
+        dragonBones.animation.WorldClock.clock.timeScale = 1;
     }
+    */
 }
 
 module.exports = Preloader;

@@ -2,7 +2,7 @@
 
 {
 	"filename": "Player/parts/armL.png",
-	"frame": {"x":80,"y":184,"w":15,"h":32},
+	"frame": {"x":195,"y":116,"w":15,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":32},
@@ -11,7 +11,7 @@
 },
 {
 	"filename": "Player/parts/armR.png",
-	"frame": {"x":80,"y":218,"w":15,"h":31},
+	"frame": {"x":238,"y":107,"w":15,"h":31},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":31},
@@ -20,7 +20,7 @@
 },
 {
 	"filename": "Player/parts/armUpperL.png",
-	"frame": {"x":110,"y":93,"w":18,"h":35},
+	"frame": {"x":212,"y":138,"w":18,"h":35},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":18,"h":35},
@@ -29,7 +29,7 @@
 },
 {
 	"filename": "Player/parts/armUpperR.png",
-	"frame": {"x":84,"y":124,"w":15,"h":35},
+	"frame": {"x":195,"y":79,"w":15,"h":35},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":15,"h":35},
@@ -38,25 +38,16 @@
 },
 {
 	"filename": "Player/parts/body.png",
-	"frame": {"x":196,"y":107,"w":31,"h":60},
+	"frame": {"x":174,"y":2,"w":36,"h":75},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":60},
-	"sourceSize": {"w":31,"h":60},
-	"pivot": {"x":0.5,"y":0.5}
-},
-{
-	"filename": "Player/parts/face.png",
-	"frame": {"x":138,"y":78,"w":56,"h":35},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":56,"h":35},
-	"sourceSize": {"w":56,"h":35},
+	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":75},
+	"sourceSize": {"w":36,"h":75},
 	"pivot": {"x":0.5,"y":0.5}
 },
 {
 	"filename": "Player/parts/footL.png",
-	"frame": {"x":206,"y":2,"w":38,"h":30},
+	"frame": {"x":134,"y":2,"w":38,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":30},
@@ -65,7 +56,7 @@
 },
 {
 	"filename": "Player/parts/footR.png",
-	"frame": {"x":206,"y":2,"w":38,"h":30},
+	"frame": {"x":134,"y":2,"w":38,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":30},
@@ -73,17 +64,8 @@
 	"pivot": {"x":0.5,"y":0.5}
 },
 {
-	"filename": "Player/parts/hair.png",
-	"frame": {"x":51,"y":2,"w":85,"h":89},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":85,"h":89},
-	"sourceSize": {"w":85,"h":89},
-	"pivot": {"x":0.5,"y":0.5}
-},
-{
 	"filename": "Player/parts/handL.png",
-	"frame": {"x":84,"y":93,"w":24,"h":29},
+	"frame": {"x":212,"y":107,"w":24,"h":29},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":29},
@@ -92,7 +74,7 @@
 },
 {
 	"filename": "Player/parts/handR.png",
-	"frame": {"x":229,"y":152,"w":24,"h":30},
+	"frame": {"x":134,"y":86,"w":24,"h":30},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":30},
@@ -101,25 +83,16 @@
 },
 {
 	"filename": "Player/parts/head.png",
-	"frame": {"x":138,"y":2,"w":66,"h":74},
+	"frame": {"x":51,"y":2,"w":81,"h":87},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":74},
-	"sourceSize": {"w":66,"h":74},
-	"pivot": {"x":0.5,"y":0.5}
-},
-{
-	"filename": "Player/parts/hips.png",
-	"frame": {"x":206,"y":34,"w":35,"h":19},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":35,"h":19},
-	"sourceSize": {"w":35,"h":19},
+	"spriteSourceSize": {"x":0,"y":0,"w":81,"h":87},
+	"sourceSize": {"w":81,"h":87},
 	"pivot": {"x":0.5,"y":0.5}
 },
 {
 	"filename": "Player/parts/legL.png",
-	"frame": {"x":206,"y":55,"w":32,"h":50},
+	"frame": {"x":134,"y":34,"w":32,"h":50},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":50},
@@ -128,7 +101,7 @@
 },
 {
 	"filename": "Player/parts/legR.png",
-	"frame": {"x":229,"y":107,"w":25,"h":43},
+	"frame": {"x":168,"y":79,"w":25,"h":43},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":25,"h":43},
@@ -137,7 +110,7 @@
 },
 {
 	"filename": "Player/parts/upperLegL.png",
-	"frame": {"x":51,"y":184,"w":27,"h":51},
+	"frame": {"x":212,"y":54,"w":27,"h":51},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":27,"h":51},
@@ -146,7 +119,7 @@
 },
 {
 	"filename": "Player/parts/upperLegR.png",
-	"frame": {"x":51,"y":115,"w":31,"h":50},
+	"frame": {"x":212,"y":2,"w":31,"h":50},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":31,"h":50},
@@ -169,6 +142,6 @@
 	"format": "RGBA8888",
 	"size": {"w":256,"h":256},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c093ca0b26389454d88eee507693f6a1:7a061f9fd1267ac02d1309b55a4b61cc:866bca81418cbe71cba21ad90f370922$"
+	"smartupdate": "$TexturePacker:SmartUpdate:778cd429205d8331727a46746dcb2159:9cc694f86295a066c791f941cc5d8dbe:866bca81418cbe71cba21ad90f370922$"
 }
 }

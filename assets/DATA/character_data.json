@@ -1,0 +1,113 @@
+{
+
+    "player_1": {
+
+        "level": 1,
+
+        "min_attack": 0,
+        "max_attack": 0,
+
+        "strength": 3,
+        "vitality": 5,
+        "dexterity": 2,
+        "intelligence": 1,
+        "luck": 1,
+
+        "health_steal": 0,
+        "speed": 300,
+
+        "hit_stun": 500,
+
+        "skills": [
+            "swing",
+            "fireball",
+            "heal",
+            "focus"
+        ]
+
+    },
+
+
+    "player_2": {
+
+        "level": 1,
+
+        "min_attack": 0,
+        "max_attack": 0,
+
+        "strength": 3,
+        "vitality": 5,
+        "dexterity": 2,
+        "intelligence": 1,
+        "luck": 1,
+
+        "health_steal": 0,
+        "speed": 300,
+
+        "hit_stun": 500,
+
+        "skills": [
+            "swing",
+            "fireball",
+            "heal",
+            "focus"
+        ]
+
+    },
+
+
+    "player_3": {
+
+        "level": 1,
+
+        "min_attack": 0,
+        "max_attack": 0,
+
+        "strength": 3,
+        "vitality": 5,
+        "dexterity": 2,
+        "intelligence": 1,
+        "luck": 1,
+
+        "health_steal": 0,
+        "speed": 300,
+
+        "hit_stun": 500,
+
+        "skills": [
+            "swing",
+            "fireball",
+            "heal",
+            "focus"
+        ]
+
+    },
+
+
+    "player_4": {
+
+        "level": 1,
+
+        "min_attack": 0,
+        "max_attack": 0,
+
+        "strength": 3,
+        "vitality": 5,
+        "dexterity": 2,
+        "intelligence": 1,
+        "luck": 1,
+
+        "health_steal": 0,
+        "speed": 300,
+
+        "hit_stun": 500,
+
+        "skills": [
+            "fireball",
+            "fireball",
+            "heal",
+            "focus"
+        ]
+
+    }
+}

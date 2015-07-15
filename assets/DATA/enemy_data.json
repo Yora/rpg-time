@@ -1,0 +1,40 @@
+{
+
+    "enemy_group_1": [
+
+        "slime",
+        "enemy_formation_1"
+    ],
+
+    "enemy_group_2": [
+
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "enemy_formation_2"
+
+    ],
+
+    "enemy_group_3": [
+
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "enemy_formation_2"
+    ],
+
+    "enemy_group_4": [
+
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "slime",
+        "enemy_formation_3"
+    ]
+}

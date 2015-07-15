@@ -51,7 +51,6 @@ var CharacterUI = function(game, index, move_char_ui) {
     this.prev_y_adjustment = 0;
     this.skill_selected = false;
     this.selected_skill_slot = 0;
-    this.test_incrament = index;
 
     //player_group = this['g_player_' + index];
 
@@ -92,8 +91,8 @@ var CharacterUI = function(game, index, move_char_ui) {
     //sp_val = this.game.make.bitmapText(93, 85, 'Agency_54', '12/12', 35); 
     //hp_val = this.game.make.text(93, -30, '123/123', { font: "24px Arial", fill: "#ff0044", align: "center" });
     //sp_val = this.game.make.text(93, 85, '12/12', { font: "24px Arial", fill: "#ff0044", align: "center" }); 
-    hp_val = this.game.make.sprite(0, 0, '');
-    sp_val = this.game.make.sprite(0, 0, '');
+    //hp_val = this.game.make.sprite(0, 0, '');
+    //sp_val = this.game.make.sprite(0, 0, '');
 
     this.text_to_bitmap(13, 125, 'skill', 25, '0xF87046', 1.5, 1.5);              //getAt(17) //orig font size 35
     this.text_to_bitmap(13, 238, 'skill', 25, '0x0087FF', 1.5, 1.5);              //getAt(18) //orig font size 35
@@ -105,8 +104,8 @@ var CharacterUI = function(game, index, move_char_ui) {
     this.text_to_bitmap(180, 484, '25', 38,   '0xFF5858', 1.5, 1.5);              //getAt(24) // orig font size 54
 
     this.text_to_bitmap(15, -70, 'Charname', 35);                       //getAt(25)
-    this.text_to_bitmap(hp_val.width + 100, -30, 'HP', 35, '0x83FF79'); //getAt(26)
-    this.text_to_bitmap(sp_val.width + 100, 85, 'SP', 35, '0x0099FF');  //getAt(27)
+    //this.text_to_bitmap(hp_val.width + 100, -30, 'HP', 35, '0x83FF79'); //getAt(26)
+    //this.text_to_bitmap(sp_val.width + 100, 85, 'SP', 35, '0x0099FF');  //getAt(27)
 
     ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,8 +137,8 @@ var CharacterUI = function(game, index, move_char_ui) {
     //    this.getAt(i).visible = false;
 
     //this.add(line);
-    this.add(hp_val);
-    this.add(sp_val);
+    //this.add(hp_val);
+    //this.add(sp_val);
 
     // *-*-* DEBUG - error on adding new properties outside constructor (avoiding polymorphic) *-*-*    
     //Object.preventExtensions(this);
@@ -160,25 +159,19 @@ CharacterUI.prototype.text_to_bitmap = function (x, y, string, font_size, tint, 
     var height;
     var sprite;
 
-
     scale_x = scale_x || 1;
     scale_y = scale_y || 1;
-    text = this.game.add.text(x + (this.index - 1) * 238, y, string, { font: "24px Arial", fill: "#ff0044", align: "center" }); 
-    //text = this.game.make.bitmapText(x, y, 'Agency_54', string, font_size); 
-    console.log(text.x + " " + text.y)
-    text.visible = false;
-    //this.add(text);
-    //this.test_incrament 
+
+    //text = this.game.make.bitmapText(0, 0, 'Agency_54', string, font_size); 
+    //text = this.game.make.sprite(x, y, 'battle_hexagon')
+    //text.update = null;
+    
+    //width = Math.round(text.width);
+    //height = Math.round(text.height);
+
+    //bmd = this.game.make.bitmapData(this.get_bitmap_size(width, 16), this.get_bitmap_size(height, 16));
+    //bmd.drawGroup(text);
     /*
-    text = this.game.make.bitmapText(0, 0, 'Arial', string, font_size); 
-    text.update = null;
-
-    width = Math.round(text.width);
-    height = Math.round(text.height);
-
-    bmd = this.game.make.bitmapData(this.get_bitmap_size(width, 16), this.get_bitmap_size(height, 16));
-    bmd.drawGroup(text);
-
     sprite = this.create(x, y, bmd);
 
     if (tint)
@@ -193,6 +186,7 @@ CharacterUI.prototype.text_to_bitmap = function (x, y, string, font_size, tint, 
 
     text.destroy();
     */
+    //this.add(text);
 }
 
 

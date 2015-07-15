@@ -224,6 +224,7 @@ dragonBones.makeArmaturePIXI = function(config, skeletonJSON, atlasJson, texture
     var textureData = dragonBones.parseJSONAtlas(atlasJson,skeletonId,partsList);
 
     var factory = new dragonBones.factorys.PixiFactory();
+    console.log(dragonBones.objects.DataParser.parseSkeletonData(skeletonJSON))
     factory.addSkeletonData(dragonBones.objects.DataParser.parseSkeletonData(skeletonJSON));
     var atlas = new dragonBones.textures.PixiTextureAtlas(texture, textureData);
     factory.addTextureAtlas(atlas);
@@ -256,6 +257,8 @@ dragonBones.makeArmaturePhaser = function (config, skeletonJSON, atlasJson, text
     var atlas = new dragonBones.textures.PhaserBonesAtlas(texture, textureData);
     //pass atlas to factory
     factory.addTextureAtlas(atlas);
+
+    console.log(factory)
 
 
     // generate the armature

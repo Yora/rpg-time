@@ -1300,6 +1300,8 @@ var dragonBones;
                 var transform;
                 var pivot;
 
+                //console.log(passedTime)
+
                 l--;
                 while (k--) {
                     bone = this._armature._boneList[k];
@@ -1308,10 +1310,10 @@ var dragonBones;
 
                     x = 0;
                     y = 0;
-                    skewX = 0;
-                    skewY = 0;
-                    scaleX = 0;
-                    scaleY = 0;
+                    //skewX = 0;
+                    //skewY = 0;
+                    //scaleX = 0;
+                    //scaleY = 0;
                     pivotX = 0;
                     pivotY = 0;
 
@@ -1338,10 +1340,10 @@ var dragonBones;
                                 pivot = timelineState.pivot;
                                 x += transform.x * weight;
                                 y += transform.y * weight;
-                                skewX += transform.skewX * weight;
-                                skewY += transform.skewY * weight;
-                                scaleX += transform.scaleX * weight;
-                                scaleY += transform.scaleY * weight;
+                                //skewX += transform.skewX * weight;
+                                //skewY += transform.skewY * weight;
+                                //scaleX += transform.scaleX * weight;
+                                //scaleY += transform.scaleY * weight;
                                 pivotX += pivot.x * weight;
                                 pivotY += pivot.y * weight;
 
@@ -1360,10 +1362,10 @@ var dragonBones;
 
                     transform.x = x;
                     transform.y = y;
-                    transform.skewX = skewX;
-                    transform.skewY = skewY;
-                    transform.scaleX = scaleX;
-                    transform.scaleY = scaleY;
+                    //transform.skewX = skewX;
+                    //transform.skewY = skewY;
+                    //transform.scaleX = scaleX;
+                    //transform.scaleY = scaleY;
                     pivot.x = pivotX;
                     pivot.y = pivotY;
                 }
